@@ -30,6 +30,8 @@ Thumbs.db
 .doc/
 archive/
 pytest_cache/
+CLAUDE.md
+CONTEXT_LOADING_POLICY.md
 
 # Generated
 *.log
