@@ -1,0 +1,29 @@
+# E2 Weather Capability Extension — Example Manifest v2
+# ADR-0044 EA-002: Extension adds capability, does not create new personality.
+
+example_id: "e2_weather"
+title: "Weather Capability Extension"
+category: "E2"
+spec_version: "1.0"
+ri_version: "0.1.0"
+host: "mobile"
+extension: "weather_query"
+scenario: "weather_query_then_personality_check"
+validation: "sandbox_execution"
+
+description: >
+  Demonstrates that a third-party Extension can add weather query capability
+  to Tang OS without modifying Core Identity or creating a new personality.
+
+# Capability Manifest v2 (E2-003)
+capability:
+  id: "weather_query"
+  version: "1.0"
+  type: "knowledge"
+  taoal: "A1"
+  required_permission:
+    - "external_information_read"
+  identity_access: false
+  memory_access: "limited"
+  risk_level: "low"
+  sandbox_required: true

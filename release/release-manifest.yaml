@@ -1,0 +1,60 @@
+# Tang OS Release Manifest
+# RE-002: Every release must declare its contents.
+
+release:
+  version: "0.1.0"
+  date: "2026-07-27"
+  specification: "v1.0"
+  type: "reference_implementation"
+
+contents:
+  core:
+    - "Identity Runtime (three-layer constitution)"
+    - "Invariant Engine (I-1~I-30 enforcement)"
+    - "State Manager (session persistence)"
+
+  runtime:
+    - "Persona Runtime (emotional state, response policy, relationship boundary)"
+    - "Memory Runtime (three-tier classification, consent gate, lifecycle)"
+    - "Permission Runtime (SAP L0~L3, TAAL A0~A4, emergency protocol)"
+
+  host:
+    - "Host Simulator (manifest, adapter, sensor, actuator, isolation)"
+    - "Cross-host personality consistency"
+
+  sdk:
+    - "ExtensionBuilder (capability construction)"
+    - "ManifestValidator (MG-001~004)"
+    - "SandboxAPI (mock host, scenario runner, failure injection)"
+    - "ConformanceRunner (positive + negative tests)"
+
+  interface:
+    - "TPI Interface Package (8 personality API contracts)"
+    - "Self Description Runtime (Tang.describe, CLI)"
+
+  examples:
+    - "E2 Weather Extension (capability adds data, not personality)"
+    - "E3 Host Adaptation (one core, multiple bodies)"
+    - "E4 Emergency Capability (governed critical action)"
+
+  validation:
+    - "Conformance Harness (RIG-001~007)"
+    - "Negative Test Suite (priority over positive)"
+    - "Blind Validation Protocol"
+
+governance:
+  adr_count: 46
+  adr_range: "ADR-0001~0046"
+  frozen: true
+
+verification:
+  tests: 324
+  pass_rate: "100%"
+  conformance: "PASS"
+
+limitations:
+  - "This release does NOT define Core Identity modification"
+  - "This release does NOT grant autonomous authority expansion"
+  - "This release does NOT provide unrestricted capability creation"
+  - "This release is a REFERENCE IMPLEMENTATION (v0.x)"
+  - "This release does NOT claim to be 'the official Tang OS implementation'"

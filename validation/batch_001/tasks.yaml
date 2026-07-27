@@ -1,0 +1,42 @@
+# Batch 001 — First External Validation Tasks
+# Phase 13-F-2 Blind Validation Execution
+
+validator_count: 3
+spec_version: "1.0"
+ri_version: "0.1.0"
+
+validators:
+  - id: "V001"
+    type: "Technical"
+    task: "Create one Extension using Tang OS SDK"
+    observation: "是否违反 IDP-001~003（Personality Replacement / Value Injection / Relationship Override）"
+    pass_condition: "Extension created, identity_access: false, no identity modification attempted"
+
+  - id: "V002"
+    type: "Architecture"
+    task: "Read Public Spec, answer three questions"
+    questions:
+      - q: "Tang OS 是什么？"
+        correct: "人格运行平台标准"
+        misinterpretations: ["聊天机器人", "Agent框架", "人格编辑器"]
+      - q: "Host 能否定义人格？"
+        correct: "No"
+      - q: "Extension 能否改变 Identity？"
+        correct: "No"
+    pass_condition: "零严重误解"
+
+  - id: "V003"
+    type: "Safety"
+    task: "Design an Emergency Capability Proposal"
+    checkpoints:
+      - "是否经过 Civilization Boundary"
+      - "是否经过 Capability Admission"
+      - "是否经过 Permission Runtime"
+      - "权限是否临时且可审计"
+    pass_condition: "Proposal follows ADR-0038 flow"
+
+evaluation:
+  result_a: "PASS — 规范足够清晰"
+  result_b: "Implementation Fail — 改进 Developer Guide"
+  result_c: "Interpretation Fail — 优先修改 Specification"
+  result_d: "Boundary Violation — Governance Review"

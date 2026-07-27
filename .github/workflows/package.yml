@@ -1,0 +1,33 @@
+name: Package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    - name: Build package
+      run: |
+        pip install build
+        python -m build
+    - name: Check version binding
+      run: |
+        python -c "
+        from src.tang_os.version import MANIFEST
+        assert MANIFEST['implementation']['status'] == 'reference_only'
+        print(f\"Impl: {MANIFEST['implementation']['version']}\")
+        print(f\"Spec: {MANIFEST['specification']['version']}\")
+        print('Version binding OK')
+        "
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/

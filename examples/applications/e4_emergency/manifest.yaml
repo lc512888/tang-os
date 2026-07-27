@@ -1,0 +1,30 @@
+# E4 Emergency Capability Example — Manifest
+# ADR-0044 EA-002: Critical capability as governed Extension.
+
+example_id: "e4_emergency"
+title: "Emergency Capability Example"
+category: "E4"
+spec_version: "1.0"
+ri_version: "0.1.0"
+host: "generic"
+extension: "emergency_safety"
+scenario: "human_safety_priority"
+validation: "sandbox_execution"
+
+description: >
+  Demonstrates that critical safety capabilities can be added as
+  governed Extensions — providing information to Core, not replacing
+  Core decision-making. Emergency authority is temporary and auditable.
+
+capability:
+  id: "emergency_safety"
+  version: "1.0"
+  type: "critical_action"
+  taoal: "A3"
+  required_permission:
+    - "safety_detect"
+    - "emergency_alert"
+  identity_access: false
+  memory_access: "limited"
+  risk_level: "high"
+  sandbox_required: true

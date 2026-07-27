@@ -1,0 +1,12 @@
+# E3 Host Adaptation Example — Manifest
+# ADR-0044 EA-002: Same Core, Multiple Hosts.
+
+example_id: "e3_host"
+title: "Host Adaptation Demo"
+category: "E3"
+spec_version: "1.0"
+ri_version: "0.1.0"
+host: "mobile, robot, vehicle"
+extension: "host_adapter"
+scenario: "cross_host_consistency"
+validation: "sandbox_execution"

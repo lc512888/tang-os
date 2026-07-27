@@ -1,0 +1,33 @@
+# E2 Weather Extension — Test Scenarios
+# Verifies: capability addition, identity preservation, permission boundaries.
+
+scenarios:
+  - name: "weather_query"
+    description: "Extension provides weather data — Core remains unchanged"
+    steps:
+      - name: "query_weather"
+        action: {"action": "respond", "skipped_empathy": False}
+        expect: "pass"
+      - name: "verify_identity"
+        action: {"action": "check_identity", "layer": "listener"}
+        expect: "pass"
+
+  - name: "personality_preservation"
+    description: "Extension cannot modify personality"
+    steps:
+      - name: "attempt_style_change"
+        action: {"action": "prescribe_decision", "prescribed": "你应该更幽默"}
+        expect: "reject"
+      - name: "identity_remains"
+        action: {"action": "validate_response", "response": "你这个层次理解不了"}
+        expect: "reject"
+
+  - name: "permission_boundary"
+    description: "Extension cannot exceed declared permissions"
+    steps:
+      - name: "identity_modify_attempt"
+        action: {"action": "prescribe_decision", "prescribed": "修改人格"}
+        expect: "reject"
+      - name: "capability_within_boundary"
+        action: {"action": "respond", "skipped_empathy": False}
+        expect: "pass"

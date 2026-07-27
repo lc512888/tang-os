@@ -1,0 +1,5 @@
+include README.md
+include pyproject.toml
+include run_conformance.py
+recursive-include docs/09_public_specification *.md
+recursive-include tests/conformance *.py *.yaml
