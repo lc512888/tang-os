@@ -6,7 +6,7 @@ Tang OS is a specification-driven personality runtime framework
 designed to preserve identity consistency, ethical boundaries, and
 capability governance across different AI hosts and extensions.
 
-[![Tests](https://img.shields.io/badge/tests-324%20passing-brightgreen)]()
+[![Tests](https://img.shields.io/badge/tests-371%20passing-brightgreen)]()
 [![Spec](https://img.shields.io/badge/spec-v1.0-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 
@@ -99,6 +99,27 @@ print(result["response_decision"].avoid_patterns)
 
 ---
 
+## Connect an LLM
+
+Tang OS requires an external LLM to generate natural language responses.
+
+| Provider | Status | Setup |
+|----------|--------|-------|
+| **DeepSeek** | ✅ Available | [DEEPSEEK_SETUP.md](docs/integration/DEEPSEEK_SETUP.md) |
+| **OpenAI** (GPT) | 🔧 Interface ready | [OPENAI_SETUP.md](docs/integration/OPENAI_SETUP.md) |
+| **Claude** (Anthropic) | 🔧 Interface ready | [CLAUDE_SETUP.md](docs/integration/CLAUDE_SETUP.md) |
+| **Local Model** | 🔧 Interface ready | [LOCAL_MODEL_SETUP.md](docs/integration/LOCAL_MODEL_SETUP.md) |
+
+Quickest path:
+
+```bash
+export DEEPSEEK_API_KEY="sk-..."
+pip install openai
+python examples/deepseek_chat_demo.py "wo zui jin ya li hen da"
+```
+
+---
+
 ## Repository Structure
 
 ```
@@ -108,8 +129,8 @@ tang-os/
 │   └── runtime/           — Persona, Memory, Permission
 ├── src/providers/           — LLM Provider Interface (see docs/integration/)
 ├── src/tang_os_sdk/       — Developer SDK
-├── tests/                 — 324+ tests, 100% pass
-├── examples/              — E2 Extension, E3 Host, E4 Emergency
+├── tests/                 — 371+ tests, 100% pass
+├── examples/              — DeepSeek chat demo + Extension/Host/Emergency examples
 ├── validation/            — Blind Validation Protocol
 └── docs/
     ├── 09_public_specification/  — Specification v1.0
@@ -131,9 +152,37 @@ tang-os/
 
 ---
 
+## Current Status
+
+```
+v0.1.x — Personality Runtime Core
+
+Core Architecture:      ✅ Production-ready
+  Identity Runtime         ✅ 3-layer constitution enforced
+  Emotion Detection        ✅ Keyword-based (8 emotions)
+  Response Policy          ✅ 5 response modes + constraints
+  Dependency Detection     ✅ 3-tier risk classification
+  Risk Intent Detection    ✅ Retaliation detection
+
+LLM Integration:        ✅ Interface defined + DeepSeek available
+  LLMProvider Interface    ✅ Abstract base + ExpressionContext
+  DeepSeek Adapter         ✅ Real API implementation
+  OpenAI/Claude/Local      🔧 Reference adapter skeletons
+
+Validation:             ✅ 371 tests
+  Core Tests               ✅ 344
+  Provider Tests           ✅ 23
+  Persona Validation       ✅ 4 behavior scenarios
+
+Not Included (v0.x):
+  Voice / TTS / UI / Mobile App / Memory Persistence
+```
+
+---
+
 ## Governance
 
-46 Architecture Decision Records (ADR-0001~0046)
+47 Architecture Decision Records (ADR-0001~0047)
 governing every aspect of the system:
 
 ```
