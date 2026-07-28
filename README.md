@@ -86,7 +86,7 @@ print(result["emotional_state"].feeling)
 # → Feeling.SADNESS
 
 print(result["response_decision"].response_mode)
-# → comfort
+# → ResponseMode.COMFORT
 
 print(result["response_decision"].avoid_patterns)
 # → ["会好起来的", "别难过了", ...]
@@ -115,7 +115,7 @@ Quickest path:
 ```bash
 export DEEPSEEK_API_KEY="sk-..."
 pip install openai
-python examples/deepseek_chat_demo.py "wo zui jin ya li hen da"
+python examples/deepseek_chat_demo.py "我最近压力很大"
 ```
 
 ---

@@ -42,7 +42,7 @@ def main():
             "constraints": rd.constraints,
             "avoid_patterns": rd.avoid_patterns,
         },
-        user_input="wo zui jin ya li hen da, gan jue kuai cheng bu zhu le.",
+        user_input="我最近压力很大，感觉快撑不住了。",
         identity={"current_layer": tang.identity.current_layer.value},
     )
 
