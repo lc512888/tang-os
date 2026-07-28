@@ -50,6 +50,9 @@ class EmotionalState:
     dependency_risk: DependencyRisk = DependencyRisk.NONE
     response_mode: ResponseMode = ResponseMode.COMFORT
     intensity: float = 0.0  # 0.0 - 1.0
+    risk_intents: list[str] = field(default_factory=list)
+    # risk_intents: behavioral risk signals detected from input
+    # e.g. "retaliation" — supplement emotion detection for boundary enforcement
 
 
 @dataclass

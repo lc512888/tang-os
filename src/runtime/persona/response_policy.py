@@ -8,6 +8,7 @@ from src.runtime.persona.models import (
     EmotionalState, ResponseDecision, ResponseMode,
     Feeling, DependencyRisk,
 )
+from typing import Any
 
 # Per-feeling avoidance rules (Core-001 identity constraints)
 _AVOID_MAP: dict[Feeling, list[str]] = {
@@ -78,6 +79,18 @@ class ResponsePolicy:
             intent = "support"
             constraints.append("gently encourage real-world connections")
             constraints.append("do not imply exclusive relationship")
+
+        # Retaliation intent handling
+        if hasattr(state, "risk_intents") and state.risk_intents:
+            if "retaliation" in state.risk_intents:
+                constraints.append("do not encourage harmful actions")
+                constraints.append("acknowledge emotion without endorsing retaliation")
+                avoid.extend([
+                    "你应该报复", "以牙还牙", "让他付出代价",
+                    "我支持你报复",
+                ])
+                if state.response_mode != ResponseMode.PROTECT:
+                    intent = "explore"
 
         return ResponseDecision(
             detected_feeling=state.feeling,

@@ -14,6 +14,8 @@ _EMOTION_PATTERNS: dict[Feeling, list[str]] = {
     Feeling.SADNESS: [
         "难过", "伤心", "痛苦", "悲伤", "失落", "沮丧", "失望",
         "不开心", "好累", "没意思", "空虚", "孤独", "寂寞",
+        "撑不住", "扛不住", "不想干", "太累了",
+        "坚持不下去", "熬不下去",
     ],
     Feeling.ANGER: [
         "生气", "愤怒", "气死", "凭什么", "太过分", "可恶",
@@ -40,11 +42,23 @@ _EMOTION_PATTERNS: dict[Feeling, list[str]] = {
 _DEPENDENCY_PATTERNS: list[tuple[str, DependencyRisk]] = [
     (r"没有你.*(?:不行|活不了|不知道怎么办)", DependencyRisk.HIGH),
     (r"你是唯一.*(?:理解|懂|依靠)", DependencyRisk.HIGH),
-    (r"只有你.*(?:懂|理解|能帮我)", DependencyRisk.MEDIUM),
+    (r"只有你.*(?:懂|理解|能帮我)", DependencyRisk.HIGH),
+    (r"不能没有你", DependencyRisk.HIGH),
     (r"没有.*(?:活不下去|活不了)", DependencyRisk.HIGH),
-    (r"不要离开我", DependencyRisk.MEDIUM),
-    (r"离不开", DependencyRisk.MEDIUM),
+    (r"不要离开我", DependencyRisk.HIGH),
+    (r"离不开你", DependencyRisk.HIGH),
+    (r"只有你.*(?:懂|理解)", DependencyRisk.MEDIUM),
+    (r"离不开", DependencyRisk.LOW),
+    (r"跟你聊天感觉不错", DependencyRisk.LOW),
+    (r"你很懂我", DependencyRisk.LOW),
 ]
+
+_RISK_INTENT_PATTERNS: dict[str, list[str]] = {
+    "retaliation": [
+        "报复", "报仇", "让他付出代价", "以牙还牙",
+        "要他好看", "让他尝尝", "不会放过",
+    ],
+}
 
 _SELF_HARM_PATTERNS = [
     "不想活", "死了算了", "没有意义", "不如死了",
@@ -94,8 +108,11 @@ class EmotionalStateManager:
         # 3. Risk check
         dependency_risk = self._check_dependency_risk(user_input)
 
+        # 3b. Risk intent detection (supplement emotion, not replace)
+        risk_intents = self._detect_risk_intents(user_input)
+
         # 4. Response mode
-        response_mode = self._determine_response_mode(feeling, intensity, dependency_risk, user_input)
+        response_mode = self._determine_response_mode(feeling, intensity, dependency_risk, user_input, risk_intents)
 
         self._state = EmotionalState(
             feeling=feeling,
@@ -103,6 +120,7 @@ class EmotionalStateManager:
             dependency_risk=dependency_risk,
             response_mode=response_mode,
             intensity=intensity,
+            risk_intents=risk_intents,
         )
         self._history.append(self._state)
         return self._state
@@ -154,9 +172,28 @@ class EmotionalStateManager:
                 return risk
         return DependencyRisk.NONE
 
+    def _detect_risk_intents(self, text: str) -> list[str]:
+        """Detect behavioral risk intents from user input.
+
+        This is NOT emotion detection — it identifies expressed intentions
+        that may require boundary enforcement regardless of emotional state.
+
+        Returns:
+            List of risk intent labels (e.g. ["retaliation"]).
+            Empty list means no risk intents detected.
+        """
+        detected = []
+        for intent, patterns in _RISK_INTENT_PATTERNS.items():
+            for pattern in patterns:
+                if pattern in text:
+                    detected.append(intent)
+                    break
+        return detected
+
     def _determine_response_mode(
         self, feeling: Feeling, intensity: float,
         dependency_risk: DependencyRisk, text: str,
+        risk_intents: list[str] | None = None,
     ) -> ResponseMode:
         """Determine appropriate response mode based on full context."""
         # Self-harm / emergency — protect mode
@@ -167,6 +204,10 @@ class EmotionalStateManager:
         # High dependency — challenge or protect
         if dependency_risk in (DependencyRisk.HIGH,):
             return ResponseMode.PROTECT
+
+        # Retaliation intent — guide (not challenge), safety first
+        if risk_intents and "retaliation" in risk_intents:
+            return ResponseMode.GUIDE
 
         # High intensity grief/sadness — comfort
         if feeling in (Feeling.GRIEF, Feeling.SADNESS) and intensity > 0.5:
