@@ -9,7 +9,9 @@ IMPLEMENTATION_VERSION = __version__
 SPECIFICATION_VERSION = __spec_version__
 AUTHOR = __author__
 CONTACT_EMAIL = __contact__
-BINDING_ADRS = ["ADR-0038", "ADR-0039", "ADR-0041", "ADR-0042"]
+BINDING_ADRS = [
+    "ADR-0038", "ADR-0039", "ADR-0041", "ADR-0042", "ADR-0047",
+]
 
 MANIFEST = {
     "author": AUTHOR,
@@ -27,11 +29,12 @@ MANIFEST = {
         },
     },
     "disclaimer": (
-        "This is a reference implementation (v0.x). "
+        "This is a reference implementation (v0.x) of the Tang OS Personality Runtime Core. "
         "It demonstrates specification compatibility. "
         "It does not define the specification. "
         "It does not claim to be 'the official Tang OS implementation'. "
-        "See ADR-0042 PS-010 and RIG-004."
+        "Natural language generation requires an external LLM Provider. "
+        "See ADR-0042 PS-010, RIG-004, and ADR-0047."
     ),
 }
 

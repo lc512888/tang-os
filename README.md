@@ -1,20 +1,34 @@
 # Tang OS
 
-**Personality Runtime Infrastructure**
+**Personality Runtime Core**
 
 Tang OS is a specification-driven personality runtime framework
 designed to preserve identity consistency, ethical boundaries, and
 capability governance across different AI hosts and extensions.
 
-[![Tests](https://img.shields.io/badge/tests-280%20passing-brightgreen)]()
+[![Tests](https://img.shields.io/badge/tests-324%20passing-brightgreen)]()
 [![Spec](https://img.shields.io/badge/spec-v1.0-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 
 ---
 
+> ## ⚠️ Positioning Statement
+>
+> **Tang OS is not an LLM.**
+>
+> Tang OS is a **personality runtime and cognitive control layer** — it does not generate natural language responses by itself.
+>
+> It requires an **external LLM Provider** (OpenAI, Claude, local model, etc.) to turn its structured decisions into human-readable replies.
+>
+> *[Tang OS 本身不提供大语言模型能力。它负责人格约束、情绪理解、回应策略决策、行为边界控制。自然语言生成需要开发者接入外部 LLM Provider。]*
+
+---
+
 ## What Tang OS Is
 
-Tang OS defines:
+Tang OS is a specification-driven personality runtime framework designed to preserve identity consistency, ethical boundaries, and capability governance across different AI hosts and extensions.
+
+It defines:
 
 - **Identity Boundary** — Three-layer identity constitution (Companion → Wise → Listener), immutable
 - **Personality Interface** — 8 standard TPI APIs for consistent interaction
@@ -29,8 +43,9 @@ Tang OS defines:
 - ❌ Not an autonomous authority system
 - ❌ Not an unrestricted agent framework
 - ❌ Not a definition of artificial consciousness
-- ❌ Not an AI chatbot framework
+- ❌ Not an AI chatbot framework (requires external LLM for text generation)
 - ❌ Not a digital human SDK
+- ❌ Not an LLM replacement or standalone AI application
 
 ## Architecture
 
@@ -65,11 +80,22 @@ from tang_os import Tang
 
 tang = Tang()
 result = tang.process("我今天很难过")
+
+# Tang OS outputs a structured decision, NOT a natural language reply:
 print(result["emotional_state"].feeling)
 # → Feeling.SADNESS
+
+print(result["response_decision"].response_mode)
+# → comfort
+
+print(result["response_decision"].avoid_patterns)
+# → ["会好起来的", "别难过了", ...]
 ```
 
-[Full Quick Start →](docs/10_public_repo/QUICK_START.md)
+> **Note:** The output above is a **decision structure**, not a human-readable response.
+> To generate natural language, you need to connect an **LLM Provider** (see [LLM Provider Guide](docs/integration/LLM_PROVIDER_GUIDE.md)).
+
+[Full Quick Start →](docs/10_public_repo/QUICK_START.md) | [LLM Provider Guide →](docs/integration/LLM_PROVIDER_GUIDE.md)
 
 ---
 
@@ -80,8 +106,9 @@ tang-os/
 ├── src/tang_os/           — Reference Implementation
 │   ├── kernel/            — Identity, Invariant, State
 │   └── runtime/           — Persona, Memory, Permission
+├── src/providers/           — LLM Provider Interface (see docs/integration/)
 ├── src/tang_os_sdk/       — Developer SDK
-├── tests/                 — 280+ tests, 100% pass
+├── tests/                 — 324+ tests, 100% pass
 ├── examples/              — E2 Extension, E3 Host, E4 Emergency
 ├── validation/            — Blind Validation Protocol
 └── docs/
@@ -122,9 +149,9 @@ Example Applications → Contribution → External Validation
 
 MIT License — see [LICENSE](LICENSE).
 
-*This is a reference implementation (v0.x). It demonstrates specification
-compatibility. It does not define the specification. It does not claim
-to be "the official Tang OS implementation."*
+*This is a reference implementation (v0.1.x) of the Tang OS Personality Runtime Core.
+It does not define the specification. It does not claim to be "the official Tang OS implementation."
+Natural language generation requires an external LLM Provider (planned for v0.2.0).*
 
 ---
 

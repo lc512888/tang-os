@@ -16,6 +16,35 @@ They do not create new identities under Tang OS.
 
 ---
 
+## 如果你想接入 LLM（自然语言生成）
+
+> Tang OS Core 输出结构化决策（ResponseDecision），不生成自然语言。
+> 需要一个外部的 LLM Provider 来完成从"决策"到"人话"的转换。
+
+### 接口
+
+```python
+from src.providers.llm import LLMProvider, ExpressionContext
+
+class MyProvider(LLMProvider):
+    def generate(self, context: ExpressionContext) -> str:
+        # 使用 context.to_chat_messages() 获得标准消息格式
+        # 调用你的 LLM API 并返回文本
+        ...
+```
+
+### 选择 Provider
+
+| Provider | 推荐场景 | 文档 |
+|----------|---------|------|
+| OpenAI | 快速原型 / 兼容服务 | [指南](../integration/OPENAI_SETUP.md) |
+| Claude | 生产部署 / 情感理解 | [指南](../integration/CLAUDE_SETUP.md) |
+| Local | 离线 / 隐私敏感 | [指南](../integration/LOCAL_MODEL_SETUP.md) |
+
+详细说明见 [LLM Provider Guide](../integration/LLM_PROVIDER_GUIDE.md)。
+
+---
+
 ## 如何参与生态而不破坏人格底座
 
 ### 如果你想开发 Extension
