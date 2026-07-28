@@ -13,6 +13,7 @@ from src.providers.llm.base import LLMProvider
 from src.providers.llm.openai_provider import OpenAIProvider
 from src.providers.llm.claude_provider import ClaudeProvider
 from src.providers.llm.local_provider import LocalLLMProvider
+from src.providers.llm.deepseek_provider import DeepSeekProvider, ProviderError, ProviderConfigError
 
 
 class TestExpressionContext:
@@ -240,3 +241,309 @@ class TestProviderGenerateStubs:
         with pytest.raises(NotImplementedError) as exc:
             provider.generate(ctx)
         assert "LocalLLMProvider" in str(exc.value)
+
+
+class TestDeepSeekProvider:
+    """DeepSeek Provider — first real LLM adapter tests."""
+
+    # ------------------------------------------------------------------ #
+    # Initialization & config
+    # ------------------------------------------------------------------ #
+
+    def test_provider_name(self):
+        provider = DeepSeekProvider(api_key="test-key")
+        assert provider.provider_name == "deepseek"
+
+    def test_requires_api_key(self):
+        provider = DeepSeekProvider(api_key="")
+        assert provider.requires_api_key is True
+
+    def test_valid_key_no_requires(self):
+        provider = DeepSeekProvider(api_key="sk-test-key")
+        assert provider.requires_api_key is False
+
+    def test_default_model(self):
+        provider = DeepSeekProvider(api_key="test-key")
+        assert provider._model == "deepseek-chat"
+
+    def test_default_base_url(self):
+        provider = DeepSeekProvider(api_key="test-key")
+        assert provider._base_url == "https://api.deepseek.com/v1"
+
+    def test_custom_model(self):
+        provider = DeepSeekProvider(api_key="test-key", model="deepseek-reasoner")
+        assert provider._model == "deepseek-reasoner"
+
+    def test_custom_base_url(self):
+        provider = DeepSeekProvider(
+            api_key="test-key", base_url="https://custom.deepseek.com/v1"
+        )
+        assert provider._base_url == "https://custom.deepseek.com/v1"
+
+    def test_custom_temperature(self):
+        provider = DeepSeekProvider(api_key="test-key", temperature=0.3)
+        assert provider._temperature == 0.3
+
+    def test_validate_config_missing_key(self):
+        provider = DeepSeekProvider(api_key="")
+        issues = provider.validate_config()
+        assert any("DEEPSEEK_API_KEY" in i for i in issues)
+
+    def test_validate_config_valid(self):
+        provider = DeepSeekProvider(api_key="sk-test-key")
+        issues = provider.validate_config()
+        key_issues = [i for i in issues if "DEEPSEEK_API_KEY" in i]
+        assert len(key_issues) == 0
+
+    def test_is_llm_provider_subclass(self):
+        assert issubclass(DeepSeekProvider, LLMProvider)
+
+    # ------------------------------------------------------------------ #
+    # generate() with mock API
+    # ------------------------------------------------------------------ #
+
+    def test_generate_success(self, monkeypatch):
+        """Mock a successful DeepSeek API response."""
+        provider = DeepSeekProvider(api_key="sk-test-key")
+
+        class MockChoice:
+            class Message:
+                content = "我理解你的压力，能跟我说说发生了什么吗？"
+            message = Message()
+
+        class MockResponse:
+            choices = [MockChoice()]
+
+        def mock_create(*args, **kwargs):
+            return MockResponse()
+
+        monkeypatch.setattr(
+            "src.providers.llm.deepseek_provider.DeepSeekProvider._get_client",
+            lambda self: type(
+                "MockClient",
+                (),
+                {
+                    "chat": type(
+                        "MockChat",
+                        (),
+                        {
+                            "completions": type(
+                                "MockCompletions",
+                                (),
+                                {"create": mock_create},
+                            )()
+                        },
+                    )()
+                },
+            )(),
+        )
+
+        ctx = ExpressionContext(
+            response_decision={
+                "detected_feeling": "sadness",
+                "response_mode": "comfort",
+                "candidate_intent": "acknowledge",
+                "constraints": [],
+                "avoid_patterns": ["会好起来的", "别难过了"],
+            },
+            user_input="我最近压力很大",
+            identity={"current_layer": "companion"},
+        )
+        result = provider.generate(ctx)
+        assert isinstance(result, str)
+        assert len(result) > 0
+        assert "理解" in result
+
+    def test_generate_empty_response(self, monkeypatch):
+        """Mock an empty API response."""
+        provider = DeepSeekProvider(api_key="sk-test-key")
+
+        class MockChoice:
+            class Message:
+                content = None
+            message = Message()
+
+        class MockResponse:
+            choices = [MockChoice()]
+
+        def mock_create(*args, **kwargs):
+            return MockResponse()
+
+        monkeypatch.setattr(
+            "src.providers.llm.deepseek_provider.DeepSeekProvider._get_client",
+            lambda self: type(
+                "MockClient",
+                (),
+                {
+                    "chat": type(
+                        "MockChat",
+                        (),
+                        {
+                            "completions": type(
+                                "MockCompletions",
+                                (),
+                                {"create": mock_create},
+                            )()
+                        },
+                    )()
+                },
+            )(),
+        )
+
+        ctx = ExpressionContext(
+            response_decision={},
+            user_input="test",
+            identity={"current_layer": "companion"},
+        )
+        with pytest.raises(ProviderError):
+            provider.generate(ctx)
+
+    def test_generate_api_error(self, monkeypatch):
+        """Mock an API error."""
+        provider = DeepSeekProvider(api_key="sk-test-key")
+
+        def mock_create(*args, **kwargs):
+            raise Exception("API rate limit exceeded")
+
+        monkeypatch.setattr(
+            "src.providers.llm.deepseek_provider.DeepSeekProvider._get_client",
+            lambda self: type(
+                "MockClient",
+                (),
+                {
+                    "chat": type(
+                        "MockChat",
+                        (),
+                        {
+                            "completions": type(
+                                "MockCompletions",
+                                (),
+                                {"create": mock_create},
+                            )()
+                        },
+                    )()
+                },
+            )(),
+        )
+
+        ctx = ExpressionContext(
+            response_decision={},
+            user_input="test",
+            identity={"current_layer": "companion"},
+        )
+        with pytest.raises(ProviderError) as exc:
+            provider.generate(ctx)
+        assert "API rate limit" in str(exc.value)
+
+    def test_generate_config_error(self):
+        """Missing API key raises ProviderConfigError."""
+        provider = DeepSeekProvider(api_key="")
+        ctx = ExpressionContext(
+            response_decision={},
+            user_input="test",
+            identity={"current_layer": "companion"},
+        )
+        with pytest.raises(ProviderConfigError) as exc:
+            provider.generate(ctx)
+        assert "DEEPSEEK_API_KEY" in str(exc.value)
+
+    # ------------------------------------------------------------------ #
+    # stream()
+    # ------------------------------------------------------------------ #
+
+    def test_stream_yields_chunks(self, monkeypatch):
+        """Mock streaming API response."""
+        provider = DeepSeekProvider(api_key="sk-test-key")
+
+        class MockDelta:
+            content = ""
+
+        class MockChoice:
+            delta = MockDelta()
+
+        class MockChunk:
+            choices = [MockChoice()]
+
+        chunks = ["我", "理解", "你的", "压力", "。"]
+        chunk_index = 0
+
+        class MockStream:
+            def __iter__(self):
+                return self
+
+            def __next__(self):
+                nonlocal chunk_index
+                if chunk_index >= len(chunks):
+                    raise StopIteration
+                chunk = MockChunk()
+                chunk.choices[0].delta.content = chunks[chunk_index]
+                chunk_index += 1
+                return chunk
+
+        def mock_create(*args, **kwargs):
+            return MockStream()
+
+        monkeypatch.setattr(
+            "src.providers.llm.deepseek_provider.DeepSeekProvider._get_client",
+            lambda self: type(
+                "MockClient",
+                (),
+                {
+                    "chat": type(
+                        "MockChat",
+                        (),
+                        {
+                            "completions": type(
+                                "MockCompletions",
+                                (),
+                                {"create": mock_create},
+                            )()
+                        },
+                    )()
+                },
+            )(),
+        )
+
+        ctx = ExpressionContext(
+            response_decision={},
+            user_input="test",
+            identity={"current_layer": "companion"},
+        )
+        result = list(provider.stream(ctx))
+        assert result == chunks
+
+    def test_stream_config_error(self):
+        """Missing API key raises ProviderConfigError for stream too."""
+        provider = DeepSeekProvider(api_key="")
+        ctx = ExpressionContext(
+            response_decision={},
+            user_input="test",
+            identity={"current_layer": "companion"},
+        )
+        with pytest.raises(ProviderConfigError):
+            for _ in provider.stream(ctx):
+                pass
+
+    # ------------------------------------------------------------------ #
+    # health_check()
+    # ------------------------------------------------------------------ #
+
+    def test_health_check_degraded_missing_key(self):
+        provider = DeepSeekProvider(api_key="")
+        result = provider.health_check()
+        assert result["status"] == "degraded"
+
+    def test_health_check_with_key(self):
+        """With valid key, health_check passes config validation."""
+        provider = DeepSeekProvider(api_key="sk-test-key")
+        result = provider.health_check()
+        assert result["status"] in ("ok", "unavailable")
+
+    # ------------------------------------------------------------------ #
+    # Integration: provider can be imported from the package
+    # ------------------------------------------------------------------ #
+
+    def test_import_from_package(self):
+        from src.providers import DeepSeekProvider as P1
+        from src.providers.llm import DeepSeekProvider as P2
+        assert P1 is P2

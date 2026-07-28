@@ -11,5 +11,6 @@ This package follows the architecture principle:
 
 from src.providers.llm.base import LLMProvider
 from src.providers.llm.context import ExpressionContext
+from src.providers.llm.deepseek_provider import DeepSeekProvider
 
-__all__ = ["LLMProvider", "ExpressionContext"]
+__all__ = ["LLMProvider", "ExpressionContext", "DeepSeekProvider"]

@@ -20,10 +20,12 @@ from src.providers.llm.context import ExpressionContext
 from src.providers.llm.openai_provider import OpenAIProvider
 from src.providers.llm.claude_provider import ClaudeProvider
 from src.providers.llm.local_provider import LocalLLMProvider
+from src.providers.llm.deepseek_provider import DeepSeekProvider
 
 __all__ = [
     "LLMProvider",
     "ExpressionContext",
+    "DeepSeekProvider",
     "OpenAIProvider",
     "ClaudeProvider",
     "LocalLLMProvider",
