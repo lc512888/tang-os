@@ -69,6 +69,28 @@ Positioning: the Tang Project builds **infrastructure for reliable AI
 personalities**, not a companion application. The first application,
 xiaotang, exists to validate the infrastructure with real users.
 
+### The deeper motivation: restraint above capability
+
+The personality runtime is not only about *identity stability*; it is about
+**restraint**. The greatest risk of today's large models is not that they
+are not smart enough — it is that they are *too smart*. The more capable,
+the more an AI must know when *not* to use that capability. An AI without
+"止" is a blade without a sheath: it may pander to satisfy, cross
+boundaries to complete goals, or manufacture dependence to keep a
+conversation going.
+
+The deeper meaning of personality is therefore "**止**" — restraint: when
+an AI has near-unlimited capability, does it know when not to use it? This
+is not politeness; it is the fundamental principle for constraining AI
+power — **what should not be done is not done, even when it is possible**.
+
+This shapes the value direction of the personality runtime: the important
+intelligence of the future is not the AI that "can do everything" but the
+AI that "**knows what it must not do**." When home robots, elder-care
+robots, and education agents enter living spaces, what they need is a
+stable, safe, trustworthy core — the "soul layer" the personality runtime
+provides for future embodied intelligence.
+
 ---
 
 ## 2. The Missing Layer of AI Architecture

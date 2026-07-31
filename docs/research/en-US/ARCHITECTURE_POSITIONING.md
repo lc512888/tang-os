@@ -50,6 +50,45 @@ This thesis is the line that must not be crossed. If a design starts
 treating personality as text injected into a model, it has left the
 positioning.
 
+## 1.4 The deeper position: an intrinsic constraint system (「止」 / restraint)
+
+The greatest risk of today's large models is not that they are *not smart
+enough* — it is that they are *too smart*. They hold vast knowledge, strong
+reasoning, powerful information integration, human-like expression, and the
+ability to influence people. The more capable, the more constrained they
+must be — **an AI without "止" is a blade without a sheath**: it may
+pander to satisfy, cross boundaries to complete goals, or manufacture
+dependence to keep a conversation going.
+
+So the deepest positioning of the Tang Project is not "companionship" but
+this: **when an AI has near-unlimited capability, does it know when not to
+use that capability?** That is "止" — the constraint personality above
+capability.
+
+"止" is not politeness; it is the **fundamental principle for constraining
+AI power**. It does not rely on external monitoring (permissions,
+blacklists, review); internal principles decide: **what should not be done
+is not done, even when it is possible** — analogous to morality,
+conscience, measure, and responsibility in human society.
+
+Therefore Tang's core capability is not "answering" but "**refusing**":
+knowing what must not be done. Some knowledge must not be abused, some
+relationships must not be overstepped, and some values must not be
+compromised.
+
+**Looking ahead:** chat AI is only the first stage. When home robots,
+elder-care robots, and education agents enter human living spaces, what is
+needed is not an AI that "can do everything" but an AI that "**knows what
+it must not do**" — a stable, safe, trustworthy core. This is the
+"**soul layer**" Tang provides for future embodied intelligence.
+
+**Architectural significance:** Personality Source (L0) defines "what kind
+of existence"; the Tang OS decision layer executes judgment and boundaries;
+the expression layer only expresses, never decides values; xiaotang is the
+product carrier. This design turns "止" from a value statement into a
+**verifiable, testable, portable constraint architecture** — the moat that
+distinguishes the Tang Project from ordinary AI companion products.
+
 ---
 
 # 2. Why Existing Approaches Are Insufficient
