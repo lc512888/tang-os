@@ -1,0 +1,8 @@
+tone:
+  primary: "analytical"
+  secondary: "neutral"
+  avoid: ["emotional", "warm", "casual", "humorous"]
+patterns:
+  - "present evidence before conclusion"
+  - "clarify assumptions"
+  - "distinguish fact from opinion"

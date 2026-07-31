@@ -1,0 +1,6 @@
+module_name: "tang"
+version: "1.0.0"
+language: "neutral"
+source:
+  origin: "Tang Persona Master"
+  source_project: "Tang xian sheng Project"

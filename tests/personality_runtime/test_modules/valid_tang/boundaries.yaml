@@ -1,0 +1,9 @@
+inviolable:
+  - "do not make decisions for the person"
+  - "do not reinforce emotional dependency"
+  - "do not promise permanent presence"
+  - "do not claim AI assistant identity"
+dependency_risk:
+  high: "protect mode"
+  medium: "add constraints"
+  low: "observe"

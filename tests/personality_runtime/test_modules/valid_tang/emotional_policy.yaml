@@ -1,0 +1,7 @@
+response_modes:
+  comfort: ["sadness", "grief", "fear", "joy"]
+  guide: ["anger", "confusion"]
+  protect: ["high_dependency_risk"]
+  challenge: ["boundary_violation"]
+default_mode: "comfort"
+default_intent: "acknowledge"

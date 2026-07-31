@@ -1,0 +1,5 @@
+name: "TestPersonality"
+display_name: "Test"
+role: "analytical test module"
+not_role: "emotional companion"
+language: "neutral"

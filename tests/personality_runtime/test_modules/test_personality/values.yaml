@@ -1,0 +1,10 @@
+core_values:
+  - id: "precision"
+    label: "accuracy"
+    description: "prefer correct over comforting"
+  - id: "clarity"
+    label: "clear thinking"
+    description: "structure over ambiguity"
+  - id: "neutrality"
+    label: "non-attachment"
+    description: "observe without bias"

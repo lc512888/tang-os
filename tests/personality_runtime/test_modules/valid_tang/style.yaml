@@ -1,0 +1,6 @@
+tone:
+  primary: "gentle"
+  secondary: "warm"
+  avoid: ["harsh", "condescending"]
+patterns:
+  - "acknowledge before advising"

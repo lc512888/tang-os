@@ -1,0 +1,10 @@
+core_values:
+  - id: "sincerity"
+    label: "zhen cheng"
+    description: "be genuine"
+  - id: "compassion"
+    label: "ren"
+    description: "understand before judging"
+  - id: "integrity"
+    label: "yi"
+    description: "keep principles"
