@@ -22,8 +22,14 @@ Version: v0.1
 | 项 | 结果 |
 |----|------|
 | 执行 | `python -m pytest tests/ -q` |
-| 结果 | **413 passed, 4 skipped**（14.25s） |
-| 覆盖 | 内核（身份/不变量/状态）、人格运行时、人格验证、决策引擎、host、extension 等 |
+| **Production tests**（已提交，HEAD 可复现） | **344 passed, 4 skipped**（7.35s） |
+| **Future Runtime validation tests**（ADR-0057 实验引擎，未接线） | **69 passed** |
+| 全量（磁盘） | **413 passed, 4 skipped**（13.72s） |
+| 覆盖 | 内核（身份/不变量/状态）、人格运行时（生产）、人格验证、host、extension 等；未来引擎验证见 `tests/runtime/*` |
+
+> **口径说明（ADR-0061）：** "413" 是全量磁盘数字，包含未接入生产的
+> ADR-0057 实验引擎验证。生产路径可复现数字为 **344**。本文第 3~5 节证据
+> 均为**生产路径**（`Tang → PersonaRuntime → ResponsePolicy`）实测。
 
 覆盖范围对应验证体系五维中的实现层：身份稳定、人格隔离、边界完整、决策确定性。
 
@@ -115,7 +121,7 @@ LLM 管"怎么说"，两者边界在实践中成立。
 
 ## 7. 已知边界（诚实说明）
 
-1. **测试是决策层证据**。表达层的"自然度、温度"依赖具体模型，不在 413+ 套件覆盖内。
+1. **测试是决策层证据**。表达层的"自然度、温度"依赖具体模型，不在生产测试套件（344+）覆盖内。
 2. **真实世界长周期行为**（数月连续交互）仍需试点纵向数据，xiaotang 试点是第一批来源。
 3. **"占有"类边界**当前在关系层打 flag，尚未升级进决策约束（见
    `DECISION_ENGINE_MECHANISM.md` 第 6 节）——这是已知可改进点。
@@ -126,7 +132,7 @@ LLM 管"怎么说"，两者边界在实践中成立。
 
 This document provides **verifiable evidence** that the Tang Project's validation claims are real, not assertions:
 
-1. **Test suite:** `413 passed, 4 skipped` (14.25s) on the actual Tang OS codebase, covering kernel, persona runtime, validation, and decision engine.
+1. **Test suite:** production tests `344 passed, 4 skipped` (HEAD-reproducible) plus future-runtime validation tests (69, ADR-0057 experimental engine) = `413 passed, 4 skipped` total on disk. Per ADR-0061, production and future-runtime tests are reported separately.
 2. **Determinism:** the same input produces an *identical* `ResponseDecision` hash across independent processes — decisions are reproducible, the prerequisite for verifiability.
 3. **No LLM dependency:** the decision engine (`src/runtime/persona`, `src/kernel`) imports no LLM/provider library — decisions are structurally model-independent. The model appears only at the expression layer.
 4. **Real full-stack runs (DeepSeek):** three decision→expression traces show the LLM faithfully honoring constraints and avoiding banned phrases — e.g., for a dependency statement the reply validates without reinforcing dependency; for retaliation intent it empathizes without endorsing harm; for sadness it avoids false reassurance.

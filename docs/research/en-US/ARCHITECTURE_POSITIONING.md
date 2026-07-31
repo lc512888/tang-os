@@ -190,8 +190,9 @@ subjective feel.
 ## 4.2 How validation is embedded
 
 - Validation is part of the runtime contract, not an afterthought.
-- Tang OS ships with a test suite (413+ tests, frozen runtime, zero
-  personality hardcoding).
+- Tang OS ships with a production test suite (344+ tests, HEAD-reproducible)
+  plus future-runtime validation tests (69, ADR-0057 experimental engine, not
+  wired — see ADR-0061); frozen runtime, zero personality hardcoding.
 - Blind-validation principles (see ADR-0060) govern how outcomes are
   judged — evaluators do not bias toward expected answers.
 - Real-world longitudinal behavior is the next layer of evidence, and

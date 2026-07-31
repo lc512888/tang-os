@@ -19,8 +19,10 @@ Version: v0.1
 | ADR-0058 | Personality Runtime Validation Framework | `docs/02_decisions/ADR-0058-personality-runtime-validation-framework.md` | 人格运行时验证框架（验证体系的结构化定义） |
 | ADR-0059 | Personality Capability Integrity Validation | `docs/02_decisions/ADR-0059-capability-integrity-validation.md` | 人格能力完整性的验证（能力边界可测） |
 | ADR-0060 | Blind Validation Principle | `docs/02_decisions/ADR-0060-blind-validation-principle.md` | 盲验原则：评估者不偏向预期答案 |
+| ADR-0061 | Runtime Architecture Transition Boundary | `docs/decisions/ADR-0061-runtime-architecture-transition-boundary.md` | 界定生产运行时（PersonaRuntime）与 ADR-0057 未来引擎的边界：不接线、迁移需独立 ADR + 双轨验证 |
 
-> 注：0048–0056 在唐先生 `02_decisions/` 中未见对应文件（编号空缺/保留）。
+> 注：0048–0056 在唐先生 `02_decisions/` 中未见对应文件（编号空缺/保留）；
+> ADR-0061 存放于 `docs/decisions/`（与索引同目录）。
 
 ---
 

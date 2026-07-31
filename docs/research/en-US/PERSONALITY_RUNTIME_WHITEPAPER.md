@@ -338,7 +338,8 @@ not a matter of whether a personality "looks like" itself.
 
 - The runtime is frozen; personality logic contains **zero personality
   hardcoding** in the runtime layer.
-- Tang OS ships with a 413+ test suite.
+- Tang OS ships with a production test suite (344+) plus future-runtime
+  validation tests (69, ADR-0057 experimental engine — see ADR-0061).
 - Evaluation follows a blind-validation principle: judges do not bias
   toward expected answers.
 

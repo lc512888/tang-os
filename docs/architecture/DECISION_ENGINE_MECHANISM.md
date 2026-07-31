@@ -5,6 +5,11 @@
 Version: v0.1
 定位：给工程师看的机制可见性文档 —— 决策引擎"到底是怎么算的"。
 
+> **边界说明（ADR-0061）：** 本文档描述的是**当前生产引擎**
+> `Tang → PersonaRuntime → ResponsePolicy → ResponseDecision`。
+> ADR-0057 定义的未来引擎（`src/runtime/engine/`，输出 `DecisionResult`）是
+> **实验层，未接线生产**，不在本文范围。
+
 > **一句话（人话版）：** "小唐怎么回应"不是靠 AI 现场临时想的，而是先由一套**确定的规则**算好决定，AI 只负责把决定翻译成话。规则可以测试，换模型也不变。
 
 > 本文所有 schema 与行为均来自 Tang OS 实际实现（`src/runtime/persona/`、`src/kernel/`），
