@@ -1,6 +1,10 @@
 # Contributing to Tang OS
 
 **来源：** ADR-0045 Contribution Governance Standard
+**定位：** Tang OS Core Contribution Rules —— 适用于 Tang OS 运行时、核心代码、Provider 与 ADR 执行。
+
+> 项目级开发指南见 [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)（Tang Project Development Guide）。
+> 两者分工：根目录管 **Tang OS 核心规范**，`docs/` 管 **整个项目结构与开发**。
 
 ---
 
