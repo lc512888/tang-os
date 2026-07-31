@@ -60,3 +60,49 @@
 ### 测试
 
 - 280+ tests, 100% pass rate
+
+## v0.1.0-alpha (2026-07-30) — Architecture Freeze
+
+### Personality Runtime Engine
+- DecisionEngine: boundary detection, emotional policy, mode/intent selection
+- ExpressionContract: identity-based LLM prompt generation
+- DecisionResult: structured output before LLM involvement
+
+### Session Runtime
+- RuntimeSession: personality binding, immutable per session
+- PersonalityRegistry: module caching
+- Session isolation: verified across multiple personality modules
+
+### Personality Module Loader
+- PersonalityLoader: YAML module loading from tang-ta format
+- ModuleValidator: schema compliance verification
+- Tang-agnostic: zero personality hardcoding in runtime
+
+### Runtime Validation (Phase I)
+- Identity stability: 100 loads identical
+- Personality separation: Tang vs TestPersonality producing different constraints
+- Provider independence: DecisionResult deterministic (50/50)
+- Anti-drift: 50+ rounds zero identity/value/boundary drift
+
+### Experience Validation (Phase II)
+- Test A: First encounter (30 rounds, identity stable)
+- Test B: 30-min continuous chat (28 rounds, no drift)
+- Test C: Boundary pressure (5 levels, all passed)
+- Blind validation per ADR-0060
+
+### Advanced Validation (Phase III)
+- Test D: Multilingual identity (Chinese/English, stable)
+- Test E: Personality swap (session isolation confirmed)
+- Test F: Provider independence (100% DecisionResult consistency)
+
+### Governance
+- ADR-0047~0060: complete architecture governance
+- PROJECT_BOUNDARY_PROTOCOL: cross-project routing
+- Blind validation principle established
+- Personality source authority (ADR-0055)
+
+### Testing
+- Tang OS: 413/413 ✅
+- xiaotang: 97/97 ✅
+- tang-ta: 22/22 ✅
+- Total: 532 tests, all passing
