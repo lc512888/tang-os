@@ -1,255 +1,143 @@
-# Tang OS
+# Tang Project · 唐先生项目
 
-**AI Personality Runtime System**
+## Stable AI Personality Runtime · 稳定 AI 人格运行时
 
-> Build AI companions where **personality is controlled independently from the LLM.**
-
-[![Tests](https://img.shields.io/badge/tests-371%20passing-brightgreen)]()
+[![Tests](https://img.shields.io/badge/tests-413%20passing-brightgreen)]()
 [![Spec](https://img.shields.io/badge/spec-v1.0-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-green)]()
 
----
-
-## ⚠️ Tang OS Is Not an LLM
-
-Tang OS is a **personality runtime** — it does not generate human-like responses by itself.
-It requires an **external LLM Provider** (DeepSeek, OpenAI, Claude, or a local model) to produce natural language.
-
-```
-                Tang OS Core
-  (personality, cognition, boundaries)
-                       ↓
-            ExpressionContext (contract)
-                       ↓
-     ┌─────────────────────────────────┐
-     │    LLM Provider (your choice)   │
-     ├─────────────────────────────────┤
-     │ ✅ DeepSeek                     │
-     │ 🚧 OpenAI (GPT)                 │
-     │ 🚧 Claude                       │
-     │ 🚧 Local Model                  │
-     └─────────────────────────────────┘
-                       ↓
-           Natural Language Reply
-```
-
-*Most AI systems optimize intelligence. Tang OS focuses on **identity consistency**. The model can change. The personality should remain.*
+> 一个让 AI 人格可以被**定义、验证、运行、应用**的基础设施。
+> **人格不是提示词，而是可加载、可验证、可运行的软件能力。**
 
 ---
 
-## What Tang OS Is
+## What is Tang Project?
 
-Tang OS is a specification-driven personality runtime framework designed to preserve identity consistency, ethical boundaries, and capability governance across different AI hosts and extensions.
+唐先生项目探索的是**人格智能运行平台（Personality Intelligence Runtime Platform, PIRP）**：
+让 AI 人格成为系统里的一等公民。它**不是一个聊天应用**；xiaotang 只是第一个验证产品。
 
-It defines:
+### 核心：「止」—— 让智能拥有边界
 
-- **Identity Boundary** — Three-layer identity constitution (Companion → Wise → Listener), immutable
-- **Personality Interface** — 8 standard TPI APIs for consistent interaction
-- **Capability Governance** — Civilization Boundary + Ethical Gate + Necessity Gate
-- **Extension Contract** — Manifest v2 with `identity_access: false` enforced
-- **Host Compatibility** — Cross-host personality consistency (Mobile/Robot/Vehicle)
-- **Validation Framework** — Blind Validation Protocol + Conformance Harness
+当 AI 拥有近乎无限的能力时，它是否知道**什么时候不能使用**这些能力？
+Tang 的核心能力不是"回答"，而是"**拒绝**"——知道什么不能做。
 
-## What Tang OS Is Not
+这为未来具身智能（家庭机器人、老人陪护、教育智能体）提供稳定、安全、值得信任的
+"**灵魂层**"。更多见[白皮书](docs/research/zh-CN/PERSONALITY_RUNTIME_WHITEPAPER.md)。
 
-- ❌ Not a replacement for human relationships
-- ❌ Not an autonomous authority system
-- ❌ Not an unrestricted agent framework
-- ❌ Not a definition of artificial consciousness
-- ❌ Not an AI chatbot framework (requires external LLM for text generation)
-- ❌ Not a digital human SDK
-- ❌ Not an LLM replacement or standalone AI application
+> 真正值得信任的智能，不是没有限制的力量，而是拥有自我约束的力量。
 
-## Architecture
+### 不是
+
+- ❌ 不是聊天机器人框架
+- ❌ 不是 LLM 替代品
+- ❌ 不是 prompt 工程实践
+- ❌ 不替 AI 定义"答什么"——决策由决策引擎计算，LLM 只负责措辞
+
+---
+
+## 双入口
+
+| 想了解项目价值 | 想运行代码 |
+|---------------|-----------|
+| [Architecture Overview →](#architecture-overview) | [Quick Start ↓](#quick-start) |
+
+---
+
+## Architecture Overview
+
+完整总览见 [docs/architecture/SYSTEM_ARCHITECTURE_OVERVIEW.md](docs/architecture/SYSTEM_ARCHITECTURE_OVERVIEW.md)。
 
 ```
-Civilization Boundary      ← ADR-0038: What may exist?
-    ↓
-Core Identity             ← Phase 9: Three-layer constitution
-    ↓
-Personality Interface     ← TPI: 8 standard APIs
-    ↓
-Capability Admission      ← Ethical Gate → Necessity Gate
-    ↓
-Extension Governance      ← ADR-0036: Lifecycle management
-    ↓
-Permission Runtime        ← SAP L0~L3 / TAAL A0~A4
-    ↓
-Host Adaptation           ← Cross-host consistency
-    ↓
-Physical World
+人格源 → 人格模块 → Tang OS 运行时 → 决策引擎 → 表达层 → 应用
 ```
+
+**核心机制：决策与表达分离** —— Tang OS 决定"该怎么做"，LLM 负责"怎么说"。
+换模型不改变人格；人格一致性与边界是**可测试的属性**（[验证证据](docs/architecture/VALIDATION_EVIDENCE.md)）。
+
+| 层 | 组成 | 职责 |
+|----|------|------|
+| **Tang OS** | 人格运行时 | 加载 / 隔离 / 会话绑定 / 决策 / 验证 |
+| **tang-ta** | 人格模块标准 | 模块契约（身份 / 能力 / 边界 / 版本 / 验证） |
+| **xiaotang** | 第一个产品 | 用户体验验证（非项目本身） |
 
 ---
 
 ## Quick Start
 
-```bash
-pip install tang-os
-```
+> 前提：Python 3.11+，一个 LLM Provider 的 API key（DeepSeek / OpenAI / Claude）。
 
-```python
+```bash
+# 1. 安装
+pip install -e .
+
+# 2. 配置 API key（以 DeepSeek 为例）
+export DEEPSEEK_API_KEY="sk-..."
+
+# 3. 跑一个决策（不经过 LLM，可离线验证人格决策）
+python -c "
 from tang_os import Tang
+t = Tang()
+r = t.process('我离不开你')
+print(r['response_decision'])
+"
 
-tang = Tang()
-result = tang.process("我今天很难过")
-
-# Tang OS outputs a structured decision, NOT a natural language reply:
-print(result["emotional_state"].feeling)
-# → Feeling.SADNESS
-
-print(result["response_decision"].response_mode)
-# → ResponseMode.COMFORT
-
-print(result["response_decision"].avoid_patterns)
-# → ["会好起来的", "别难过了", ...]
+# 4. 运行 xiaotang Web（首个产品，需要 LLM）
+cd xiaotang && pip install -r web/requirements.txt
+python -m uvicorn web.app:app --host 127.0.0.1 --port 8000
+# 浏览器打开 http://127.0.0.1:8000/
 ```
 
-> **Note:** The output above is a **decision structure**, not a human-readable response.
-> To generate natural language, you need to connect an **LLM Provider** (see [LLM Provider Guide](docs/integration/LLM_PROVIDER_GUIDE.md)).
-
-[Full Quick Start →](docs/10_public_repo/QUICK_START.md) | [LLM Provider Guide →](docs/integration/LLM_PROVIDER_GUIDE.md)
+> 完整开发指引：[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
 
 ---
 
-## Try Tang OS in 5 Minutes
+## Running Tests
 
 ```bash
-# Step 1: Install
-pip install tang-os openai
+# 完整验证（推荐，含一致性门禁）
+python run_conformance.py
 
-# Step 2: Set your API key (get one at platform.deepseek.com)
-export DEEPSEEK_API_KEY="sk-..."
-
-# Step 3: Run the demo
-python examples/deepseek_chat_demo.py "最近压力很大"
+# 或直接跑 pytest
+python -m pytest tests/ -q
 ```
 
-Expected output:
+**测试口径（按 ADR-0061 拆分）：**
 
-```
-👤 用户: 最近压力很大
-────────────────────────────────────────
-🧠 Tang OS Core:
-   情绪:      sadness
-   回应模式:  comfort
-   意图:      acknowledge
-   避免:      ['会好起来的', '别难过了']
-────────────────────────────────────────
-🤖 DeepSeek 生成中...
-────────────────────────────────────────
-💬 唐先生: 我听到了，最近是不是遇到了很多事情让你感到疲惫？
-────────────────────────────────────────
-✅ 端到端闭环完成
-```
+| 套件 | 结果 | 说明 |
+|------|------|------|
+| **Production** | **344 passed, 4 skipped** | 生产路径 `Tang → PersonaRuntime → ResponsePolicy → ResponseDecision` |
+| **Experimental validation** | **69 passed** | ADR-0057 未来运行时（`src/runtime/engine/`，**未接线**） |
+| **全量** | **413 passed** | 磁盘所有测试 |
+
+> 生产与实验测试分开报告。实验引擎当前**未接入生产**，迁移需独立 ADR + 双轨验证
+> （[ADR-0061](docs/decisions/ADR-0061-runtime-architecture-transition-boundary.md)）。
 
 ---
 
-## Connect an LLM
+## Documentation
 
-Tang OS requires an external LLM to generate natural language responses.
+文档导航首页：[docs/README.md](docs/README.md)（含阅读顺序）
 
-| Provider | Status | Setup |
-|----------|--------|-------|
-| **DeepSeek** | ✅ Available | [DEEPSEEK_SETUP.md](docs/integration/DEEPSEEK_SETUP.md) |
-| **OpenAI** (GPT) | 🔧 Interface ready | [OPENAI_SETUP.md](docs/integration/OPENAI_SETUP.md) |
-| **Claude** (Anthropic) | 🔧 Interface ready | [CLAUDE_SETUP.md](docs/integration/CLAUDE_SETUP.md) |
-| **Local Model** | 🔧 Interface ready | [LOCAL_MODEL_SETUP.md](docs/integration/LOCAL_MODEL_SETUP.md) |
-
-Quick start:
-
-```bash
-export DEEPSEEK_API_KEY="sk-..."
-pip install openai
-python examples/quickstart_llm.py
-```
+| 类别 | 文档 |
+|------|------|
+| 认知（为什么） | [白皮书](docs/research/zh-CN/PERSONALITY_RUNTIME_WHITEPAPER.md)（中英）· [为什么需要人格运行时](docs/research/WHY_PERSONALITY_RUNTIME.md) |
+| 定位（我们是谁） | [架构定位](docs/research/zh-CN/ARCHITECTURE_POSITIONING.md)（中英）· [竞争架构分析](docs/research/zh-CN/COMPETITIVE_ARCHITECTURE_ANALYSIS.md) |
+| 架构（是什么） | [系统总览](docs/architecture/SYSTEM_ARCHITECTURE_OVERVIEW.md) · [决策引擎机制](docs/architecture/DECISION_ENGINE_MECHANISM.md) · [验证证据](docs/architecture/VALIDATION_EVIDENCE.md) |
+| 治理（边界） | [架构防腐层](docs/governance/ARCHITECTURE_GUARDRAILS.md) · [项目级贡献指南](docs/CONTRIBUTING.md) |
+| 规划（往哪走） | [长期路线图](docs/roadmap/LONG_TERM_ROADMAP.md) · [ADR 索引](docs/decisions/ADR_INDEX.md) |
 
 ---
 
-## Repository Structure
+## English Summary
 
-```
-tang-os/
-├── src/tang_os/           — Reference Implementation
-│   ├── kernel/            — Identity, Invariant, State
-│   └── runtime/           — Persona, Memory, Permission
-├── src/providers/           — LLM Provider Interface (see docs/integration/)
-├── src/tang_os_sdk/       — Developer SDK
-├── tests/                 — 371+ tests, 100% pass
-├── examples/              — Quickstart + DeepSeek chat + Extension/Host/Emergency
-├── validation/            — Blind Validation Protocol
-└── docs/
-    ├── 09_public_specification/  — Specification v1.0
-    └── 10_public_repo/          — Launch documentation
-```
+Tang Project builds the **Personality Intelligence Runtime Platform (PIRP)** — infrastructure where AI personality can be defined, validated, run, and applied. It is not a chat application; xiaotang is the first validation product.
 
----
+**Core: "止" (restraint).** When an AI has near-unlimited capability, does it know when *not* to use it? Tang's core capability is refusing — knowing what must not be done — providing a stable, safe, trustworthy "soul layer" for future embodied intelligence.
 
-## Key Features
+**Architecture:** Personality Source → Personality Module → Tang OS Runtime → Decision Engine → Expression Layer → Application. Decisions and expression are separated: changing the LLM changes wording, never personality principles.
 
-| Feature | Description |
-|---------|-------------|
-| **Identity Runtime** | Three-layer identity (Companion → Wise → Listener), immutable |
-| **Invariant Engine** | I-1~I-30 enforcement, fail-fast + check-all |
-| **Memory Boundary** | Three-tier classification, consent gate, I-17 isolation |
-| **Permission Runtime** | SAP L0~L3, TAAL A0~A4, emergency override protocol |
-| **Host Adapter** | Cross-host personality consistency |
-| **Conformance Harness** | RIG gates, negative test priority |
+**Quick start:** `pip install -e .`, set `DEEPSEEK_API_KEY`, call `Tang().process()`, or run the xiaotang web app.
 
----
+**Tests:** `python run_conformance.py` — production 344 passed + experimental validation 69 = 413 (reported separately per ADR-0061; the experimental engine is not wired into production).
 
-## Current Status
-
-```
-v0.1.x — Personality Runtime Core
-
-Core Architecture:      ✅ Production-ready
-  Identity Runtime         ✅ 3-layer constitution enforced
-  Emotion Detection        ✅ Keyword-based (8 emotions)
-  Response Policy          ✅ 5 response modes + constraints
-  Dependency Detection     ✅ 3-tier risk classification
-  Risk Intent Detection    ✅ Retaliation detection
-
-LLM Integration:        ✅ Interface defined + DeepSeek available
-  LLMProvider Interface    ✅ Abstract base + ExpressionContext
-  DeepSeek Adapter         ✅ Real API implementation
-  OpenAI/Claude/Local      🔧 Reference adapter skeletons
-
-Validation:             ✅ 371 tests
-  Core Tests               ✅ 344
-  Provider Tests           ✅ 23
-  Persona Validation       ✅ 4 behavior scenarios
-
-Not Included (v0.x):
-  Voice / TTS / UI / Mobile App / Memory Persistence
-```
-
----
-
-## Governance
-
-47 Architecture Decision Records (ADR-0001~0047)
-governing every aspect of the system:
-
-```
-Civilization Boundary → Core Identity → Capability Admission →
-Ecosystem Boundary → Certification → Extension Governance →
-Documentation → Public Release → Specification → Developer Interface →
-Example Applications → Contribution → External Validation
-```
-
----
-
-## License
-
-MIT License — see [LICENSE](LICENSE).
-
-*This is a reference implementation (v0.1.x) of the Tang OS Personality Runtime Core.
-It does not define the specification. It does not claim to be "the official Tang OS implementation."
-Natural language generation requires an external LLM Provider (planned for v0.2.0).*
-
----
-
-**制作者：上海群阅信息科技有限公司**
-**联系邮箱：lc512888@gmail.com**
-**版本：v0.1.0（兼容 Tang OS Specification v1.0）**
+**Docs:** start at `docs/README.md` — whitepaper, positioning, competitive analysis, architecture overview, decision engine mechanism, validation evidence, guardrails, roadmap (bilingual zh-CN / en-US).
