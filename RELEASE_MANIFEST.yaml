@@ -2,8 +2,8 @@
 # RE-002: Every release must declare its contents.
 
 release:
-  version: "0.1.0"
-  date: "2026-07-27"
+  version: "0.2.0"
+  date: "2026-08-01"
   specification: "v1.0"
   type: "reference_implementation"
 

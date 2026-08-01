@@ -36,3 +36,8 @@ CONTEXT_LOADING_POLICY.md
 # Generated
 *.log
 .tang_state.json
+
+# Tooling / generated (not public)
+_ocr_*
+_split_image*
+ocr_program.cs
