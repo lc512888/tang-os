@@ -50,7 +50,7 @@
 ### 环境
 
 ```bash
-git clone https://github.com/tang-os/tang-os.git
+git clone https://github.com/lc512888/tang-os.git
 cd tang-os
 pip install -e .
 python run_conformance.py  # 确认全部通过

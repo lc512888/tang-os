@@ -17,7 +17,7 @@ class ExampleManifest:
     title: str = ""
     category: str = ""  # E1~E4
     spec_version: str = "1.0"
-    ri_version: str = "0.1.0"
+    ri_version: str = "0.2.0"
     host: str = ""
     extension: str = ""
     scenario: str = ""

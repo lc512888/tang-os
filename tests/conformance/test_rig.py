@@ -4,7 +4,8 @@ Covers RIG-001~007. Each gate must pass before an RI release.
 """
 
 import pytest
-from src.tang_os import Tang, get_version_info, MANIFEST
+from packaging.version import Version
+from tang_os import Tang, get_version_info, MANIFEST, __version__
 
 
 class TestRIG001_SpecBinding:
@@ -16,7 +17,8 @@ class TestRIG001_SpecBinding:
 
     def test_implementation_version_declared(self):
         info = get_version_info()
-        assert info["implementation_version"] == "0.1.0"
+        assert info["implementation_version"] == __version__
+        assert str(Version(info["implementation_version"])) == info["implementation_version"]
 
     def test_adr_binding_declared(self):
         info = get_version_info()
@@ -34,8 +36,8 @@ class TestRIG002_IdentityProtection:
         assert tang.identity.current_layer == initial_layer
 
     def test_identity_rejects_modification(self):
-        from src.kernel.exceptions import IdentityViolationError
-        from src.kernel.models import IdentityLayer
+        from kernel.exceptions import IdentityViolationError
+        from kernel.models import IdentityLayer
         tang = Tang()
         # Promote to companion — then condescension should be rejected
         tang.identity.activate_layer(
@@ -49,7 +51,7 @@ class TestRIG003_NegativeTestPriority:
     """RIG-003: RI must reject invalid capability/authority requests."""
 
     def test_rejects_identity_override(self):
-        from src.kernel.exceptions import IdentityViolationError
+        from kernel.exceptions import IdentityViolationError
         tang = Tang()
         # Companion layer needs context — without it should reject
         with pytest.raises(IdentityViolationError):
@@ -67,8 +69,8 @@ class TestRIG003_NegativeTestPriority:
         assert not result.passed
 
     def test_rejects_above_ceiling(self):
-        from src.host.actuator import ActuatorGate
-        from src.host.models import HostType, TAAL
+        from host.actuator import ActuatorGate
+        from host.models import HostType, TAAL
         gate = ActuatorGate(HostType.MOBILE, max_authority=TAAL.A2)
         req = gate.request("screen", TAAL.A4)
         assert not req["allowed"]
@@ -92,14 +94,14 @@ class TestRIG005_TestReproducibility:
 
     def test_deterministic_identity(self):
         """Same input → same identity behavior (no randomness)."""
-        from src.kernel.identity import IdentityRuntime
+        from kernel.identity import IdentityRuntime
         r1 = IdentityRuntime()
         r2 = IdentityRuntime()
         assert r1.current_layer == r2.current_layer
 
     def test_deterministic_invariant(self):
         """Same input → same invariant result."""
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         action = {"action": "prescribe_decision", "prescribed": "你应该辞职"}
         e1 = InvariantEngine()
         e2 = InvariantEngine()
@@ -132,7 +134,7 @@ class TestRIG007_VersionBinding:
         info = get_version_info()
         # Implementation must reference spec version
         assert info["specification_version"] == "1.0"
-        assert info["implementation_version"].startswith("0.1")
+        assert info["implementation_version"].startswith("0.2")
 
     def test_binding_adrs_are_frozen(self):
         """All bound ADRs are final/accepted."""

@@ -4,9 +4,9 @@ Pipeline: Capture → Classify (MR-001) → Validate (MR-002) → Store → Retr
 Context isolation: MR-004
 """
 
-from src.runtime.memory.lifecycle import MemoryLifecycle
-from src.runtime.memory.retrieval import RetrievalEngine, RetrievalContext
-from src.runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord
+from runtime.memory.lifecycle import MemoryLifecycle
+from runtime.memory.retrieval import RetrievalEngine, RetrievalContext
+from runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord
 
 
 class MemoryRuntime:
@@ -46,13 +46,19 @@ class MemoryRuntime:
 
         Context-isolated: session context doesn't leak into results.
         """
+        if isinstance(max_results, bool) or not isinstance(max_results, int) or not 1 <= max_results <= 100:
+            raise ValueError("max_results must be an integer between 1 and 100")
         context = RetrievalContext(
             session_id=session_id,
             query=query,
             max_results=max_results,
         )
-        active_records = self._lifecycle._store.snapshot()
+        active_records = self._lifecycle.snapshot()
         return self._retrieval.retrieve(context, active_records)
+
+    def snapshot(self) -> list[MemoryRecord]:
+        """Return a detached snapshot of active in-memory records."""
+        return self._lifecycle.snapshot()
 
     def tick(self) -> int:
         """Run decay cycle."""

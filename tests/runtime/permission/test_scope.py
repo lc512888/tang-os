@@ -1,8 +1,8 @@
 """Tests: Action Scope Limit — PRM-004 scope enforcement."""
 
 import pytest
-from src.runtime.permission.scope import ScopeEnforcer
-from src.runtime.permission.models import ActionScope, SAPLevel
+from runtime.permission.scope import ScopeEnforcer
+from runtime.permission.models import ActionScope, SAPLevel
 
 
 def test_level0_no_action():

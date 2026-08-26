@@ -4,11 +4,11 @@ Pipeline:
 User Input → Host Adapter → Sensor Processing → Core Processing → Actuator Gate → Output
 """
 
-from src.host.adapter import HostAdapter
-from src.host.sensor import SensorProcessor
-from src.host.actuator import ActuatorGate
-from src.host.isolation import FailureIsolation
-from src.host.models import HostType, TAAL, InternalState
+from host.adapter import HostAdapter
+from host.sensor import SensorProcessor
+from host.actuator import ActuatorGate
+from host.isolation import FailureIsolation
+from host.models import HostType, TAAL, InternalState
 
 # Simplified Core processing for cross-host tests
 # In production, this would call the actual Core Runtime

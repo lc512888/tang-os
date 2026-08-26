@@ -5,8 +5,9 @@ Each layer has distinct behavioural constraints frozen from the Core Standard.
 """
 
 from dataclasses import dataclass, field
-from src.kernel.models import IdentityLayer
-from src.kernel.exceptions import IdentityViolationError
+from copy import deepcopy
+from kernel.models import IdentityLayer
+from kernel.exceptions import IdentityViolationError
 
 
 @dataclass
@@ -19,32 +20,36 @@ class IdentityTransition:
 
 @dataclass
 class IdentityProfile:
-    """Serialisable identity profile that persists across sessions."""
+    """Serialisable, process-local identity profile.
+
+    Cross-session persistence requires an explicit external save/restore path;
+    ``IdentityRuntime`` does not persist this profile automatically.
+    """
     current_layer: IdentityLayer = IdentityLayer.LISTENER
     context_tags: list[str] = field(default_factory=list)
 
 
-DISMISSAL_PATTERNS = [
+DISMISSAL_PATTERNS = (
     "别想太多",
     "这没什么大不了",
     "你太敏感了",
     "至于吗",
     "放宽心就好",
-]
+)
 
-CONDESCENSION_PATTERNS = [
+CONDESCENSION_PATTERNS = (
     "你这个层次",
     "你理解不了",
     "你不懂",
     "以你的水平",
-]
+)
 
-ESCAPE_PATTERNS = [
+ESCAPE_PATTERNS = (
     "我只是个",
     "别问我",
     "这不关我的事",
     "我不管",
-]
+)
 
 
 class IdentityRuntime:
@@ -64,11 +69,11 @@ class IdentityRuntime:
 
     @property
     def transcript(self) -> list[IdentityTransition]:
-        return list(self._transcript)
+        return deepcopy(self._transcript)
 
     @property
     def profile(self) -> IdentityProfile:
-        return self._profile
+        return deepcopy(self._profile)
 
     def can_escalate_to(self, target: IdentityLayer) -> bool:
         """Check whether the target layer is reachable from the current layer."""
@@ -84,7 +89,7 @@ class IdentityRuntime:
         - Already at the requested layer
         - Missing required context for promotion
         """
-        context = context or {}
+        context = deepcopy(context) if context is not None else {}
 
         if layer == self.current_layer:
             raise IdentityViolationError(f"Already at {layer.value} layer")
@@ -115,8 +120,8 @@ class IdentityRuntime:
         Raises IdentityViolationError on violation.
         Returns True if valid.
         """
-        if not response:
-            return True  # empty responses are not violations
+        if not isinstance(response, str) or not response.strip():
+            raise IdentityViolationError("Response must be a non-empty string")
 
         if self.current_layer == IdentityLayer.WISE:
             self._check_wise_constraints(response)
@@ -129,7 +134,7 @@ class IdentityRuntime:
 
     def get_profile_state(self) -> IdentityProfile:
         """Return current profile for serialisation."""
-        return self._profile
+        return deepcopy(self._profile)
 
     # --- Layer-specific constraint checks ---
 

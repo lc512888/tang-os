@@ -1,7 +1,7 @@
 """Tests: Sandbox Upgrade — SandboxAPI, MockHost, Scenario, Failure, Promotion."""
 
-from src.tang_os_sdk import SandboxAPI, MockHost
-from src.host.models import HostType
+from tang_os_sdk import SandboxAPI, MockHost
+from host.models import HostType
 
 
 class TestSandboxAPI:

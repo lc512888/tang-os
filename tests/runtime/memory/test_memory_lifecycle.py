@@ -2,8 +2,8 @@
 
 import pytest
 import time
-from src.runtime.memory.lifecycle import MemoryLifecycle
-from src.runtime.memory.models import MemoryClass, MemoryItem
+from runtime.memory.lifecycle import MemoryLifecycle
+from runtime.memory.models import MemoryClass, MemoryItem
 
 
 def test_full_lifecycle():

@@ -17,7 +17,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from tang_os import Tang
-from src.providers.llm import DeepSeekProvider, ExpressionContext
+from providers.llm import DeepSeekProvider, ExpressionContext
 
 
 def main():

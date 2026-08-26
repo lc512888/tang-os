@@ -1,8 +1,8 @@
 """Tests: Sensor Evidence Boundary — HA-002 sensor provides evidence, not decision."""
 
 import pytest
-from src.host.sensor import SensorProcessor
-from src.host.models import SensorInput, HostType
+from host.sensor import SensorProcessor
+from host.models import SensorInput, HostType
 
 
 def test_sensor_to_emotion_signal():

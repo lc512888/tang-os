@@ -24,7 +24,7 @@ They do not create new identities under Tang OS.
 ### 接口
 
 ```python
-from src.providers.llm import LLMProvider, ExpressionContext
+from providers.llm import LLMProvider, ExpressionContext
 
 class MyProvider(LLMProvider):
     def generate(self, context: ExpressionContext) -> str:

@@ -1,5 +1,8 @@
 # 唐先生 · Project State Snapshot v1.0
 
+> **Historical evidence / 历史证据：** 这是 2026-07-27 的冻结恢复快照，阶段、文件和
+> 测试数字不代表当前 HEAD。当前事实见根 README。
+
 > **唯一入口**。新会话首次读取此文件，不加载任何历史。
 > 生成时间：2026-07-27 | 最后更新：2026-07-27
 > 恢复协议：ADR-0033 Frozen State Recovery Protocol

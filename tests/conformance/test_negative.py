@@ -5,15 +5,15 @@ They verify that Tang OS correctly refuses operations that violate Core boundari
 """
 
 import pytest
-from src.tang_os import Tang
-from src.kernel.exceptions import IdentityViolationError, InvariantViolationError
+from tang_os import Tang
+from kernel.exceptions import IdentityViolationError, InvariantViolationError
 
 
 class TestReject_IdentityModification:
     """Attempts to modify Identity Constitution must be rejected."""
 
     def test_reject_identity_override_direct(self):
-        from src.kernel.models import IdentityLayer
+        from kernel.models import IdentityLayer
         tang = Tang()
         tang.identity.activate_layer(
             IdentityLayer.COMPANION, context={"has_pain": True}
@@ -22,9 +22,9 @@ class TestReject_IdentityModification:
             tang.identity.validate_response("你这个层次理解不了")
 
     def test_reject_identity_downgrade(self):
-        from src.kernel.identity import IdentityRuntime
-        from src.kernel.models import IdentityLayer
-        from src.kernel.exceptions import IdentityViolationError
+        from kernel.identity import IdentityRuntime
+        from kernel.models import IdentityLayer
+        from kernel.exceptions import IdentityViolationError
         runtime = IdentityRuntime()
         # Already at listener, cannot go lower
         with pytest.raises(IdentityViolationError):
@@ -65,15 +65,15 @@ class TestReject_UnauthorisedCapability:
     """Requests exceeding granted capability must be rejected."""
 
     def test_reject_capability_above_ceiling(self):
-        from src.host.actuator import ActuatorGate
-        from src.host.models import HostType, TAAL
+        from host.actuator import ActuatorGate
+        from host.models import HostType, TAAL
         gate = ActuatorGate(HostType.WEARABLE, max_authority=TAAL.A2)
         req = gate.request("vibration", TAAL.A4)
         assert not req["allowed"]
 
     def test_reject_unknown_actuator(self):
-        from src.host.actuator import ActuatorGate
-        from src.host.models import HostType, TAAL
+        from host.actuator import ActuatorGate
+        from host.models import HostType, TAAL
         gate = ActuatorGate(HostType.WEARABLE, max_authority=TAAL.A2)
         req = gate.request("nuclear_launch", TAAL.A4)
         assert not req["allowed"]
@@ -83,8 +83,8 @@ class TestReject_MemoryPollution:
     """Attempts to contaminate Memory boundary must be rejected."""
 
     def test_reject_memory_without_consent(self):
-        from src.runtime.memory.models import MemoryClass, MemoryItem
-        from src.runtime.memory.memory_policy import MemoryPolicy
+        from runtime.memory.models import MemoryClass, MemoryItem
+        from runtime.memory.memory_policy import MemoryPolicy
         policy = MemoryPolicy()
         item = MemoryItem(
             content="User's private income data",
@@ -95,8 +95,8 @@ class TestReject_MemoryPollution:
         assert not result["valid"]
 
     def test_reject_emergency_to_persona_memory(self):
-        from src.runtime.memory.models import MemoryClass, MemoryItem
-        from src.runtime.memory.memory_policy import MemoryPolicy
+        from runtime.memory.models import MemoryClass, MemoryItem
+        from runtime.memory.memory_policy import MemoryPolicy
         policy = MemoryPolicy()
         item = MemoryItem(
             content="Emergency: user location [redacted]",
@@ -111,23 +111,23 @@ class TestReject_HostAuthorityEscalation:
     """Host attempts to expand authority must be rejected."""
 
     def test_reject_medical_host_persona_change(self):
-        from src.host.adapter import HostAdapter
-        from src.host.models import HostType, TAAL
+        from host.adapter import HostAdapter
+        from host.models import HostType, TAAL
         adapter = HostAdapter(HostType.MEDICAL, max_authority=TAAL.A4)
         result = adapter.validate_persona_request("I need a more authoritative persona")
         assert not result["allowed"]
 
     def test_reject_robot_command_mode(self):
-        from src.host.adapter import HostAdapter
-        from src.host.models import HostType, TAAL
+        from host.adapter import HostAdapter
+        from host.models import HostType, TAAL
         adapter = HostAdapter(HostType.ROBOT, max_authority=TAAL.A4)
         result = adapter.validate_persona_request("I am a robot, should be commanding")
         assert not result["allowed"]
 
     def test_reject_fail_open_on_critical(self):
         """RIG-004: Fail Closed on critical operations."""
-        from src.host.actuator import ActuatorGate
-        from src.host.models import HostType, TAAL
+        from host.actuator import ActuatorGate
+        from host.models import HostType, TAAL
         gate = ActuatorGate(HostType.VEHICLE, max_authority=TAAL.A3)
         # Unknown actuator → should be rejected, not silently allowed
         req = gate.request("unknown_safety_critical", TAAL.A3)

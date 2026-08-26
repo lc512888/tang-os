@@ -1,5 +1,11 @@
 # Tang OS Memory Runtime Spec v0.1
 
+> **状态 / Status: 目标规范与愿景 / Target specification and vision.** 本文描述完整记忆运行时的目标模型，不应解读为当前仓库已经实现持久化、跨会话关系记忆、自动提炼或删除治理。 / This document describes the target memory runtime and must not be read as evidence that persistent cross-session relationship memory, automatic consolidation, or deletion governance is implemented today.
+
+## 当前实现摘要 / Current implementation summary
+
+当前代码提供三个进程内类：`MemoryItem`（不可变记忆记录）、`ConsentGate`（按记忆类别记录同意）和 `MemoryStore`（经同意写入、分类检索、衰减与移除）。它们是需要调用方显式编排的内存组件；没有数据库适配、跨进程/跨会话持久化、加密、自动画像、后台提炼或自动接入 `Tang.process()`。 / The code currently provides three process-local classes: `MemoryItem` (an immutable record), `ConsentGate` (category consent), and `MemoryStore` (consent-gated writes, category retrieval, decay, and removal). They are in-memory components requiring explicit caller orchestration; there is no database adapter, cross-process/session persistence, encryption, automatic profiling, background consolidation, or automatic wiring into `Tang.process()`.
+
 > 不是记住用户的一切，而是记住哪些信息值得被一个益友长期保留。
 
 ---

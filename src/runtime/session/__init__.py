@@ -3,7 +3,7 @@
 Each session has one personality, which is immutable for the session's lifetime.
 """
 
-from src.runtime.session.session_context import RuntimeSession
-from src.runtime.session.registry import PersonalityRegistry
+from runtime.session.session_context import RuntimeSession
+from runtime.session.registry import PersonalityRegistry
 
 __all__ = ["RuntimeSession", "PersonalityRegistry"]

@@ -17,7 +17,8 @@ Architecture invariants (from ADR-0047 LP-003):
 
 from abc import ABC, abstractmethod
 
-from src.providers.llm.context import ExpressionContext
+from providers.llm.context import ExpressionContext
+from providers.llm.exceptions import ProviderUnsupportedError
 
 
 class LLMProvider(ABC):
@@ -66,11 +67,16 @@ class LLMProvider(ABC):
 
     @property
     def requires_api_key(self) -> bool:
-        """Whether this provider needs an API key to operate."""
+        """Whether this adapter's service requires an API key capability."""
         return True
 
+    @property
+    def is_configured(self) -> bool:
+        """Whether the current adapter configuration passes validation."""
+        return not self.validate_config()
+
     def stream(self, context: ExpressionContext):  # type: ignore[return]
-        """Stream a response token by token (optional, v0.2.0 preview).
+        """Stream a response token by token when an adapter supports it.
 
         Default implementation raises NotImplementedError.
         Override in provider when streaming support is available.
@@ -84,13 +90,13 @@ class LLMProvider(ABC):
         Raises:
             NotImplementedError: If provider does not support streaming.
         """
-        raise NotImplementedError(
-            f"{self.provider_name} does not support streaming yet. "
-            "Streaming is planned for Tang OS v0.2.0."
+        raise ProviderUnsupportedError(
+            f"{self.provider_name} does not support streaming. "
+            "Implement stream() in the concrete adapter to add this capability."
         )
 
     def health_check(self) -> dict:
-        """Check if the provider is operational (optional, v0.2.0 preview).
+        """Check whether the provider configuration appears operational.
 
         Default implementation pings validate_config.
 

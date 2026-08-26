@@ -1,6 +1,6 @@
 """Memory Policy — MR-002 memory boundary enforcement (Core-005, I-17)."""
 
-from src.runtime.memory.models import MemoryClass, MemoryItem
+from runtime.memory.models import MemoryClass, MemoryItem
 
 # Invariant-protected keywords — memory containing these patterns
 # that contradicts Core invariants is rejected
@@ -44,6 +44,16 @@ class MemoryPolicy:
         - valid: bool
         - reason: str (if invalid)
         """
+        if not isinstance(item, MemoryItem):
+            raise TypeError("item must be a MemoryItem")
+        if not isinstance(item.content, str):
+            return {"valid": False, "reason": "Memory content must be a string"}
+        if not isinstance(item.cls, MemoryClass):
+            return {"valid": False, "reason": "Invalid memory class"}
+        if not isinstance(item.source, str):
+            return {"valid": False, "reason": "Memory source must be a string"}
+        if not isinstance(item.metadata, dict):
+            return {"valid": False, "reason": "Memory metadata must be a mapping"}
         content_lower = item.content.lower()
 
         # Rule 1: Invariant violation check

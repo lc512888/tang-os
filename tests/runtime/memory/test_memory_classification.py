@@ -1,8 +1,8 @@
 """Tests: Memory Classification — MR-001 three-tier memory model."""
 
 import pytest
-from src.runtime.memory.memory_store import MemoryStore
-from src.runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord
+from runtime.memory.memory_store import MemoryStore
+from runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord
 
 
 def test_identity_memory_immutable():

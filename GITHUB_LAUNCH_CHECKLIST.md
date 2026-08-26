@@ -3,6 +3,8 @@
 **阶段：** Phase 14-C-3 — Public Repository Final Package
 **状态：** Ready for Founder Decision
 
+**最终验证（2026-08-27）：** `512 passed, 4 skipped`；conformance `PASS`。
+
 ---
 
 ## LRG Gates
@@ -34,8 +36,8 @@
 | CONTRIBUTING.md | ✅ | CG-001~005 |
 | CODE_OF_CONDUCT.md | ✅ | 行为准则 |
 | SECURITY.md | ✅ | 漏洞报告 + 响应时间 |
-| CHANGELOG.md | ✅ | v0.1.0 |
-| VERSION | ✅ | 0.1.0 |
+| CHANGELOG.md | ✅ | 发布前核对当前 `VERSION` 条目 |
+| VERSION | ✅ | 发布版本唯一来源 |
 | RELEASE_MANIFEST.yaml | ✅ | 版本 + 内容 + 限制声明 |
 | .github/workflows/test.yml | ✅ | push/PR 自动测试 |
 | .github/workflows/package.yml | ✅ | Release 版本检查 |
@@ -45,28 +47,20 @@
 | docs/10_public_repo/ | ✅ | 定位/自描述/API/QuickStart/CI/Release |
 | src/tang_os/ | ✅ | L1 Runtime Core |
 | src/tang_os_sdk/ | ✅ | L2 SDK |
-| tests/ | ✅ | 324 ✅ 100% |
+| tests/ | ✅ | 以当前 CI 运行结果为准 |
 | examples/ | ✅ | E2/E3/E4 |
 | validation/ | ✅ | Blind Protocol + Batch-001 |
 
-## README Must Include
+## README Boundary Statement
 
-已在 `README.md` 中：
+`README.md` 首屏已明确说明：Tang OS 不是完整聊天产品、智能体编排平台或生产级设备操作系统，且关联项目不随本仓库发布。
 
-```markdown
-Tang OS is not:
-- a replacement for human relationships
-- an autonomous authority system
-- an unrestricted agent framework
-- a definition of artificial consciousness
-```
-
-## Release v0.1.0 Template
+## Release 当前版本 Template
 
 已在 `.github/RELEASE_TEMPLATE.md` 中，包含：
 - Compatibility 声明
 - Specification 版本
-- Validation 状态 (324 tests, 100%)
+- Validation 状态（填写当前 CI 结果并链接对应运行）
 - Known Limitations
 - Security Policy 引用
 
@@ -80,4 +74,4 @@ Tang OS is not:
 
 ## 推荐路径
 
-建议：**GitHub Public 先行**，Spec 已冻结、324 tests 100%、CI 已配置。公开后可邀请 External Validator 按 Blind Protocol 执行验证。
+建议：仅在当前 CI、conformance 与 wheel/sdist 隔离安装验证均通过后公开；公开后可邀请 External Validator 按 Blind Protocol 执行验证。

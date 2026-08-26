@@ -1,5 +1,9 @@
 # Architecture Positioning
 
+> **Scope note (2026-08-27):** This document describes long-term strategy and target
+> architecture, not the current implementation inventory. This repository does not include
+> `tang-ta` or `xiaotang`; see the root README and full bilingual report for code facts.
+
 ## The Tang Project's Long-Term Strategic Positioning
 
 Version: v0.1
@@ -229,9 +233,10 @@ subjective feel.
 ## 4.2 How validation is embedded
 
 - Validation is part of the runtime contract, not an afterthought.
-- Tang OS ships with a production test suite (344+ tests, HEAD-reproducible)
-  plus future-runtime validation tests (69, ADR-0057 experimental engine, not
-  wired — see ADR-0061); frozen runtime, zero personality hardcoding.
+- Validation comprises the regular suite and the ADR-0057 experimental
+  validations under `tests/runtime/` (the experimental engine is not wired;
+  see ADR-0061). Use CI or release evidence for the exact result of the
+  current commit; the runtime is frozen with zero personality hardcoding.
 - Blind-validation principles (see ADR-0060) govern how outcomes are
   judged — evaluators do not bias toward expected answers.
 - Real-world longitudinal behavior is the next layer of evidence, and

@@ -1,8 +1,27 @@
-"""Tang OS Reference Implementation — Version Manifest & Spec Binding (RI-007)."""
+"""Tang OS Reference Implementation — Version Manifest & Spec Binding (RI-007).
+
+The repository-root ``VERSION`` file is the release version source used by the
+build backend. Installed distributions read that value from package metadata;
+source checkouts fall back to the root file.
+"""
+
+from importlib.metadata import PackageNotFoundError, version as package_version
+from pathlib import Path
 
 __author__ = "上海群阅信息科技有限公司"
 __contact__ = "lc512888@gmail.com"
-__version__ = "0.1.0"
+
+def _implementation_version() -> str:
+    version_file = Path(__file__).resolve().parents[2] / "VERSION"
+    if version_file.is_file():
+        return version_file.read_text(encoding="utf-8").strip()
+    try:
+        return package_version("tang-os")
+    except PackageNotFoundError:
+        return "0+unknown"
+
+
+__version__ = _implementation_version()
 __spec_version__ = "1.0"
 
 IMPLEMENTATION_VERSION = __version__

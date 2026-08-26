@@ -9,7 +9,7 @@ import yaml
 from dataclasses import dataclass, field
 from typing import Any
 
-from src.runtime.personality_loader.validator import ModuleValidator
+from runtime.personality_loader.validator import ModuleValidator
 
 
 @dataclass

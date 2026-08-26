@@ -1,6 +1,7 @@
 # Claude API Setup Guide
 
-> 接入 Anthropic Claude API 作为 Tang OS 的 LLM Provider。
+> **状态：接口骨架，不可运行。** 当前 `ClaudeProvider.generate()` 明确返回
+> `ProviderUnsupportedError`；配置 API Key 不代表适配器已就绪。
 >
 > Claude 是 Tang OS 推荐的 LLM Provider，因为其在人格一致性、指令遵循和安全边界控制方面表现最强。
 
@@ -22,7 +23,7 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 ## 快速开始
 
 ```python
-from src.providers.llm import ClaudeProvider, ExpressionContext
+from providers.llm import ClaudeProvider, ExpressionContext
 
 provider = ClaudeProvider(
     api_key="sk-ant-...",
@@ -43,8 +44,8 @@ context = ExpressionContext(
     identity={"current_layer": "companion"},
 )
 
-response = provider.generate(context)
-print(response)
+# 当前版本会抛出 ProviderUnsupportedError。可实现自定义 LLMProvider，
+# 或使用已经可运行的 DeepSeekProvider。
 ```
 
 ## 配置参数
@@ -64,7 +65,7 @@ print(response)
 | `claude-opus-4-20250514` | 高价值场景 | 最强理解力，适合复杂情感 |
 | `claude-haiku-4-20251001` | 低成本场景 | 快速响应，适合简单对话 |
 
-## 为什么 Tang OS 推荐 Claude？
+## 未来适配方向（不代表当前可用）
 
 Tang OS 的核心价值是人格一致性和行为边界控制，这与 Claude 的特性高度匹配：
 

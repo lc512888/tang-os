@@ -12,7 +12,7 @@ Usage:
     print(module.identity["name"])
 """
 
-from src.runtime.personality_loader.loader import PersonalityLoader, PersonalityModule
-from src.runtime.personality_loader.validator import ModuleValidator, ValidationResult
+from runtime.personality_loader.loader import PersonalityLoader, PersonalityModule
+from runtime.personality_loader.validator import ModuleValidator, ValidationResult
 
 __all__ = ["PersonalityLoader", "PersonalityModule", "ModuleValidator", "ValidationResult"]

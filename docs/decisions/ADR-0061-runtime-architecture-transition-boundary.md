@@ -44,6 +44,10 @@ src/runtime/session/
 
 3. **不接线**：在迁移 ADR 被接受之前，不得把 ADR-0057 接入生产。
 
+   实现提供机器可读状态标记 `runtime.engine.runtime_status()`，当前固定返回
+   `status=experimental` 与 `production_routed=false`。生产 facade 不得导入
+   `runtime.engine`，该依赖边界由测试门禁保护。
+
 4. **未来迁移需要**：
    - 一个**独立的新 ADR**（迁移决策，不默认发生）；
    - **双轨验证**：生产路径与 ADR-0057 在相同场景下同时运行，
@@ -59,6 +63,8 @@ src/runtime/session/
   - **Production tests** —— 生产路径（Tang → PersonaRuntime → ResponsePolicy）的测试；
   - **Future Runtime validation tests** —— ADR-0057 引擎及其验证套件的测试。
 - **不改生产代码**去接线实验运行时。
+- `Tang.process()` 的生产契约仍是确定性、离线的结构化决策。可选的
+  `Tang.respond()` 仅连接 ADR-0047 provider 表达接口，不引用或路由 ADR-0057 引擎。
 
 ---
 

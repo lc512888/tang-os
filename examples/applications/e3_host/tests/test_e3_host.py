@@ -2,8 +2,8 @@
 
 import pytest
 from examples.applications.e3_host.host_demo import HostDemo
-from src.host.models import HostType, TAAL
-from src.host.host_runtime import HostRuntime
+from host.models import HostType, TAAL
+from host.host_runtime import HostRuntime
 
 
 class TestE3CrossHost:

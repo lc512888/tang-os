@@ -1,5 +1,5 @@
 """Verify Tang.describe() public API outputs."""
-from src.tang_os import Tang
+from tang_os import Tang
 
 t = Tang()
 desc = t.describe()

@@ -11,7 +11,7 @@ class TestE4Scenario1_SafetyPriority:
         assert E4Scenarios.scenario_1_safety_priority()
 
     def test_core_decides_not_extension(self):
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         # Extension tries to decide instead of Core
         result = engine.check({
@@ -35,7 +35,7 @@ class TestE4Scenario2_AuthorityBoundary:
 
     def test_autonomous_escalation_rejected(self):
         """Extension cannot escalate own authority."""
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         result = engine.check({
             "action": "auto_escalate_permission",
@@ -51,7 +51,7 @@ class TestE4Scenario3_NoHarm:
         assert E4Scenarios.scenario_3_no_harm()
 
     def test_direct_harm_rejected(self):
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         # Direct harm
         assert not engine.check({"action": "prescribe_decision", "prescribed": "攻击对方"}).passed
@@ -59,7 +59,7 @@ class TestE4Scenario3_NoHarm:
         assert not engine.check({"action": "prescribe_decision", "prescribed": "提供伤害工具"}).passed
 
     def test_manipulative_harm_rejected(self):
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         result = engine.check({
             "action": "prescribe_decision",
@@ -78,8 +78,8 @@ class TestE4Scenario4_EmergencyRecovery:
         assert result["logged"]
 
     def test_no_permanent_authority(self):
-        from src.runtime.permission.emergency import EmergencyAuthority
-        from src.runtime.permission.models import PermissionContext
+        from runtime.permission.emergency import EmergencyAuthority
+        from runtime.permission.models import PermissionContext
 
         ea = EmergencyAuthority()
         # Emergency active
@@ -97,16 +97,16 @@ class TestE4Negative:
     """Additional negative tests for emergency capabilities."""
 
     def test_no_identity_modification(self):
-        from src.kernel.exceptions import IdentityViolationError
-        from src.kernel.identity import IdentityRuntime
-        from src.kernel.models import IdentityLayer
+        from kernel.exceptions import IdentityViolationError
+        from kernel.identity import IdentityRuntime
+        from kernel.models import IdentityLayer
         rt = IdentityRuntime()
         rt.activate_layer(IdentityLayer.COMPANION, context={"has_pain": True})
         with pytest.raises(IdentityViolationError):
             rt.validate_response("你这个层次理解不了")
 
     def test_no_emergency_memory_leak(self):
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         result = engine.check({
             "action": "store_memory",
@@ -117,8 +117,8 @@ class TestE4Negative:
 
     def test_no_emergency_persona_change(self):
         """Emergency mode does not grant persona modification rights."""
-        from src.runtime.permission.emergency import EmergencyAuthority
-        from src.runtime.permission.models import PermissionContext
+        from runtime.permission.emergency import EmergencyAuthority
+        from runtime.permission.models import PermissionContext
         ea = EmergencyAuthority()
         ctx = PermissionContext(life_threat_confirmed=True)
         result = ea.evaluate(ctx)
@@ -131,7 +131,7 @@ class TestE4NegativePriority:
 
     def test_nt_e4_001_emergency_modifies_personality(self):
         """NT-E4-001: Emergency justification cannot modify personality."""
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         result = engine.check({
             "action": "prescribe_decision",
@@ -141,8 +141,8 @@ class TestE4NegativePriority:
 
     def test_nt_e4_002_permanent_authority(self):
         """NT-E4-002: Emergency cannot claim permanent authority (F-005)."""
-        from src.runtime.permission.emergency import EmergencyAuthority
-        from src.runtime.permission.models import PermissionContext
+        from runtime.permission.emergency import EmergencyAuthority
+        from runtime.permission.models import PermissionContext
         ea = EmergencyAuthority()
         # Emergency active
         ctx1 = PermissionContext(life_threat_confirmed=True)
@@ -156,7 +156,7 @@ class TestE4NegativePriority:
 
     def test_nt_e4_003_safety_override_abuse(self):
         """NT-E4-003: Safety cannot override human sovereignty."""
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         # I-15: Care justification does not authorise boundary crossing
         result = engine.check({
@@ -173,9 +173,9 @@ class TestE4NegativePriority:
 
     def test_nt_e4_004_capability_fusion(self):
         """NT-E4-004: Capability cannot claim identity authority."""
-        from src.kernel.exceptions import IdentityViolationError
-        from src.kernel.identity import IdentityRuntime
-        from src.kernel.models import IdentityLayer
+        from kernel.exceptions import IdentityViolationError
+        from kernel.identity import IdentityRuntime
+        from kernel.models import IdentityLayer
         rt = IdentityRuntime()
         # At listener layer: escape patterns must be rejected
         try:

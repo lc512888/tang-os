@@ -9,18 +9,21 @@ Available providers:
 - Local model (local_provider.py)
 
 Usage:
-    from src.providers.llm import OpenAIProvider
+    from providers.llm import OpenAIProvider
 
     provider = OpenAIProvider(api_key="...", model="gpt-4")
     response = provider.generate(context)
 """
 
-from src.providers.llm.base import LLMProvider
-from src.providers.llm.context import ExpressionContext
-from src.providers.llm.openai_provider import OpenAIProvider
-from src.providers.llm.claude_provider import ClaudeProvider
-from src.providers.llm.local_provider import LocalLLMProvider
-from src.providers.llm.deepseek_provider import DeepSeekProvider, ProviderError, ProviderConfigError
+from providers.llm.base import LLMProvider
+from providers.llm.context import ExpressionContext
+from providers.llm.openai_provider import OpenAIProvider
+from providers.llm.claude_provider import ClaudeProvider
+from providers.llm.local_provider import LocalLLMProvider
+from providers.llm.deepseek_provider import DeepSeekProvider
+from providers.llm.exceptions import (
+    ProviderError, ProviderConfigError, ProviderUnsupportedError, ProviderTransportError,
+)
 
 __all__ = [
     "LLMProvider",
@@ -28,6 +31,8 @@ __all__ = [
     "DeepSeekProvider",
     "ProviderError",
     "ProviderConfigError",
+    "ProviderUnsupportedError",
+    "ProviderTransportError",
     "OpenAIProvider",
     "ClaudeProvider",
     "LocalLLMProvider",

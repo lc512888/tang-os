@@ -1,8 +1,8 @@
 """Tests: Invariant Engine — Core-002 I-1~I-30 enforcement."""
 
 import pytest
-from src.kernel.invariant import InvariantEngine
-from src.kernel.models import InvariantID, InvariantViolation
+from kernel.invariant import InvariantEngine
+from kernel.models import InvariantID, InvariantViolation
 
 
 def test_all_invariants_loaded():

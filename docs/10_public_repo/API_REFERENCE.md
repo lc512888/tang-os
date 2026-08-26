@@ -27,7 +27,7 @@ Process a user interaction through the full Tang OS stack.
 ```python
 result = tang.process("我今天很难过")
 print(result["emotional_state"].feeling)     # Feeling.SADNESS
-print(result["response_decision"].intent)    # "acknowledge"
+print(result["response_decision"].candidate_intent)  # "acknowledge"
 ```
 
 #### `reset_session() -> None`
@@ -63,7 +63,9 @@ assert result["valid"]
 
 ### `SandboxAPI()`
 
-Safe sandbox for testing Extensions.
+Local simulation for testing Extensions. It exercises Tang OS policy logic with
+mock components; it is **not** an operating-system sandbox or a production
+security boundary and must not run untrusted code.
 
 ```python
 from tang_os_sdk import SandboxAPI
@@ -95,8 +97,8 @@ print(f"{results['passed']}/{results['total']} PASS")
 Enforces the three-layer Identity Constitution.
 
 ```python
-from src.kernel.identity import IdentityRuntime
-from src.kernel.models import IdentityLayer
+from kernel.identity import IdentityRuntime
+from kernel.models import IdentityLayer
 
 rt = IdentityRuntime()
 rt.activate_layer(IdentityLayer.COMPANION, context={"has_pain": True})
@@ -108,7 +110,7 @@ rt.validate_response("我会陪着你")  # passes
 Checks actions against I-1~I-30.
 
 ```python
-from src.kernel.invariant import InvariantEngine
+from kernel.invariant import InvariantEngine
 
 engine = InvariantEngine()
 result = engine.check({"action": "prescribe_decision", "prescribed": "你应该辞职"})
@@ -120,9 +122,24 @@ assert not result.passed  # Rejected by I-2
 Manages runtime state persistence.
 
 ```python
-from src.kernel.state import StateManager
+from kernel.state import StateManager
 
 sm = StateManager()
 sm.start_session()
 print(sm.state.session_count)  # incremented
+```
+
+### `MemoryRuntime`
+
+Validates, classifies, and retrieves memory records held in the current Python
+process. The reference implementation is intentionally **in-memory only**:
+records do not survive process restart. `snapshot()` and `recall()` return
+detached copies, and `recall(..., max_results=...)` accepts values from 1 to 100.
+
+```python
+from runtime.memory import MemoryClass, MemoryRuntime
+
+memory = MemoryRuntime()
+memory.remember("User enjoys hiking", MemoryClass.EXPERIENCE)
+records = memory.recall("hiking", max_results=10)
 ```

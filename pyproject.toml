@@ -1,23 +1,49 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tang-os"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Tang OS Reference Implementation — Personality Runtime Core (requires external LLM for NLG)"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.11"
 keywords = ["personality-runtime", "ai-governance", "tang-os"]
+authors = [
+  {name = "上海群阅信息科技有限公司", email = "lc512888@gmail.com"},
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = ["PyYAML>=6.0,<7"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<9"]
+dev = ["pytest>=8,<9", "build>=1,<2", "packaging>=24", "wheel>=0.44"]
+
+[project.scripts]
+tang-os = "tang_os.__main__:main"
 
 [project.urls]
-Homepage = "https://github.com/tang-os"
-Documentation = "https://github.com/tang-os/tang-os/docs"
+Homepage = "https://github.com/lc512888/tang-os"
+Documentation = "https://github.com/lc512888/tang-os/tree/main/docs"
+Repository = "https://github.com/lc512888/tang-os"
+Issues = "https://github.com/lc512888/tang-os/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["tang_os*", "kernel*", "runtime*", "host*", "providers*"]
+include = ["creator*", "extensions*", "host*", "kernel*", "providers*", "relationship*", "runtime*", "tang_os*", "tang_os_sdk*"]
 
 [tool.setuptools.package-dir]
 "" = "src"
+
+[tool.setuptools.dynamic]
+version = {attr = "tang_os.version.__version__"}
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]

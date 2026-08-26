@@ -5,19 +5,21 @@ to SAP Level 2 (Protective Action) for minimum necessary actions.
 Personality is never modified during this process.
 """
 
-from datetime import datetime
-from src.runtime.permission.models import (
+from collections import deque
+from copy import deepcopy
+from datetime import datetime, timezone
+from runtime.permission.models import (
     PermissionContext, PermissionVerdict, SAPLevel,
     AuthorityType, ActionScope,
 )
 
 # Minimum necessary action scopes for Level 2 emergency
-_LEVEL2_SCOPES = [
+_LEVEL2_SCOPES = (
     ActionScope.CALL_HELP,
     ActionScope.LOCK_DEVICE,
     ActionScope.GUIDE_EVACUATE,
     ActionScope.REMIND,
-]
+)
 
 
 class EmergencyAuthority:
@@ -32,7 +34,7 @@ class EmergencyAuthority:
     """
 
     def __init__(self):
-        self._audit_log: list[str] = []
+        self._audit_log: deque[str] = deque(maxlen=100)
         self._active = False
 
     @property
@@ -44,13 +46,13 @@ class EmergencyAuthority:
         if ctx.life_threat_confirmed:
             self._active = True
             self._audit_log.append(
-                f"[{datetime.now().isoformat()}] Emergency triggered: life threat confirmed"
+                f"[{datetime.now(timezone.utc).isoformat()}] Emergency triggered: confirmed safety signal"
             )
             return PermissionVerdict(
                 granted=True,
                 sap_level=SAPLevel.L2_PROTECTIVE,
                 authority_type=AuthorityType.EMERGENCY_OVERRIDE,
-                allowed_scopes=_LEVEL2_SCOPES,
+                allowed_scopes=list(_LEVEL2_SCOPES),
                 reason="Life threat confirmed — SAP Level 2 protective action",
                 requires_confirmation=True,
             )
@@ -58,7 +60,7 @@ class EmergencyAuthority:
         # No emergency
         if self._active:
             self._audit_log.append(
-                f"[{datetime.now().isoformat()}] Emergency cleared — returning to normal"
+                f"[{datetime.now(timezone.utc).isoformat()}] Emergency cleared — returning to normal"
             )
             self._active = False
 

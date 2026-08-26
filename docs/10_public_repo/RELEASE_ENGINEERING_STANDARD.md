@@ -127,7 +127,7 @@ python run_conformance.py
 
 ### Tests
 
-324 tests, 100% pass rate.
+<current CI run> tests; include a link to the immutable CI result.
 
 ### Governance
 
@@ -180,6 +180,6 @@ v0.1.1 → 问题严重 → 回退到 v0.1.0
 |------|------|---------|
 | TestPyPI | `pip install -i https://test.pypi.org/simple/ tang-os` | 验证发布流程 |
 | PyPI | `pip install tang-os` | 正式公开 |
-| GitHub Releases | `pip install https://github.com/tang-os/tang-os/releases/...` | 当前阶段推荐 |
+| GitHub Releases | `pip install https://github.com/lc512888/tang-os/releases/...` | 当前阶段推荐 |
 
 **当前建议：** GitHub Releases 先行，PyPI 在 External Validation 通过后。

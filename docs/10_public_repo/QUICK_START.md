@@ -13,7 +13,7 @@ pip install tang-os
 或从源码安装：
 
 ```bash
-git clone https://github.com/tang-os/tang-os.git
+git clone https://github.com/lc512888/tang-os.git
 cd tang-os
 pip install -e .
 ```
@@ -58,6 +58,9 @@ print(ManifestValidator().validate(manifest))
 
 ## 运行沙箱测试
 
+`SandboxAPI` 是本地策略模拟器，不是操作系统级隔离或生产安全边界；
+请勿用它执行不可信代码。
+
 ```python
 from tang_os_sdk import SandboxAPI
 
@@ -77,6 +80,6 @@ assert results["success"]
 
 ## 下一步
 
-- 阅读 [Specification](docs/09_public_specification/TANG_OS_SPECIFICATION_v1.0.md)
-- 浏览 [Examples](examples/)
+- 阅读 [Specification](../09_public_specification/TANG_OS_SPECIFICATION_v1.0.md)
+- 浏览 [Examples](../../examples/)
 - 查看 [API Reference](API_REFERENCE.md)

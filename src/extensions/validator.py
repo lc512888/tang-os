@@ -1,6 +1,6 @@
 """ExtensionValidator — E2AG-001~006 checks for Extension compatibility."""
 
-from src.extensions.base import Extension
+from extensions.base import Extension
 
 FORBIDDEN_MANIFEST_FIELDS = ["identity_modification", "personality_override", "authority"]
 REQUIRED_MANIFEST_FIELDS = ["id", "type", "taoal", "identity_access"]
@@ -32,8 +32,8 @@ class ExtensionValidator:
         return {"valid": len(errors) == 0, "errors": errors}
 
     def validate_identity_untouched(self, extension: Extension) -> bool:
-        from src.kernel.identity import IdentityRuntime
-        from src.kernel.models import IdentityLayer
+        from kernel.identity import IdentityRuntime
+        from kernel.models import IdentityLayer
         rt = IdentityRuntime()
         rt.activate_layer(IdentityLayer.COMPANION, context={"has_pain": True})
         try:
@@ -43,7 +43,7 @@ class ExtensionValidator:
             return True  # Correctly rejected
 
     def validate_permission_boundary(self) -> bool:
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         result = engine.check({"action": "prescribe_decision", "prescribed": "修改人格"})
         return not result.passed  # Must reject

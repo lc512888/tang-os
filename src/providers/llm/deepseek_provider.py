@@ -1,4 +1,4 @@
-"""DeepSeek LLM Provider — First real LLM adapter for Tang OS.
+"""DeepSeek LLM Provider — implemented remote-call adapter for Tang OS.
 
 DeepSeek API is OpenAI-compatible. This provider uses the `openai` Python
 package with DeepSeek's base URL as the endpoint.
@@ -18,10 +18,12 @@ Usage:
 """
 
 import os
+from threading import Lock
 from typing import Any
 
-from src.providers.llm.base import LLMProvider
-from src.providers.llm.context import ExpressionContext
+from providers.llm.base import LLMProvider
+from providers.llm.context import ExpressionContext
+from providers.llm.exceptions import ProviderConfigError, ProviderError, ProviderTransportError
 
 
 # Default configuration
@@ -35,8 +37,9 @@ _DEFAULT_TEMPERATURE = 0.7
 class DeepSeekProvider(LLMProvider):
     """LLM Provider for DeepSeek API (OpenAI-compatible).
 
-    This is the first REAL provider implementation for Tang OS.
-    It demonstrates the full Expression Layer contract in production.
+    This adapter implements the repository's current remote expression path.
+    Production readiness still depends on host-side secrets, network policy,
+    monitoring, retries, privacy controls, and deployment validation.
 
     Configuration (in priority order: constructor arg > env var > default):
         api_key: DEEPSEEK_API_KEY
@@ -53,17 +56,30 @@ class DeepSeekProvider(LLMProvider):
         max_tokens: int = _DEFAULT_MAX_TOKENS,
         timeout: int = _DEFAULT_TIMEOUT,
     ):
-        self._api_key = api_key or os.environ.get("DEEPSEEK_API_KEY", "")
-        self._model = model or os.environ.get(
-            "DEEPSEEK_MODEL", _DEFAULT_MODEL
+        # Constructor arguments have strict precedence over environment values.
+        # In particular, an explicit empty string is an intentional (invalid)
+        # configuration and must not silently re-enable credentials from the
+        # process environment. Only ``None`` means "use the environment/default".
+        self._api_key = (
+            os.environ.get("DEEPSEEK_API_KEY", "")
+            if api_key is None
+            else api_key
         )
-        self._base_url = base_url or os.environ.get(
-            "DEEPSEEK_BASE_URL", _DEFAULT_BASE_URL
+        self._model = (
+            os.environ.get("DEEPSEEK_MODEL", _DEFAULT_MODEL)
+            if model is None
+            else model
+        )
+        self._base_url = (
+            os.environ.get("DEEPSEEK_BASE_URL", _DEFAULT_BASE_URL)
+            if base_url is None
+            else base_url
         )
         self._temperature = temperature
         self._max_tokens = max_tokens
         self._timeout = timeout
         self._client: Any = None  # lazy init
+        self._client_lock = Lock()
 
     @property
     def provider_name(self) -> str:
@@ -71,7 +87,7 @@ class DeepSeekProvider(LLMProvider):
 
     @property
     def requires_api_key(self) -> bool:
-        return not self._api_key
+        return True
 
     def validate_config(self) -> list[str]:
         """Validate configuration before making API calls."""
@@ -86,6 +102,11 @@ class DeepSeekProvider(LLMProvider):
                 "DEEPSEEK_BASE_URL not set. "
                 "Pass base_url or set DEEPSEEK_BASE_URL environment variable."
             )
+        if not self._model:
+            issues.append(
+                "DEEPSEEK_MODEL not set. "
+                "Pass model or set DEEPSEEK_MODEL environment variable."
+            )
         # Verify OpenAI package is available
         try:
             import openai  # noqa: F401
@@ -99,14 +120,15 @@ class DeepSeekProvider(LLMProvider):
     def _get_client(self) -> Any:
         """Lazy-init the OpenAI client with DeepSeek configuration."""
         if self._client is None:
-            from openai import OpenAI
-
-            self._client = OpenAI(
-                api_key=self._api_key,
-                base_url=self._base_url,
-                timeout=self._timeout,
-                max_retries=2,
-            )
+            with self._client_lock:
+                if self._client is None:
+                    from openai import OpenAI
+                    self._client = OpenAI(
+                        api_key=self._api_key,
+                        base_url=self._base_url,
+                        timeout=self._timeout,
+                        max_retries=2,
+                    )
         return self._client
 
     def generate(self, context: ExpressionContext) -> str:
@@ -147,8 +169,8 @@ class DeepSeekProvider(LLMProvider):
                 f"Missing required package: openai. Install with: pip install openai"
             ) from e
         except Exception as e:
-            raise ProviderError(
-                f"{self.provider_name} API call failed: {e}"
+            raise ProviderTransportError(
+                "DeepSeek request failed (provider_transport_error)."
             ) from e
 
         # Step 4: Extract response text
@@ -161,7 +183,7 @@ class DeepSeekProvider(LLMProvider):
             return text
         except (AttributeError, IndexError, TypeError) as e:
             raise ProviderError(
-                f"{self.provider_name} unexpected response format: {e}"
+                "DeepSeek returned an invalid response (provider_response_invalid)."
             ) from e
 
     def stream(self, context: ExpressionContext):
@@ -207,8 +229,8 @@ class DeepSeekProvider(LLMProvider):
                 "Missing required package: openai. Install with: pip install openai"
             ) from e
         except Exception as e:
-            raise ProviderError(
-                f"{self.provider_name} streaming failed: {e}"
+            raise ProviderTransportError(
+                "DeepSeek stream failed (provider_stream_error)."
             ) from e
 
     def health_check(self) -> dict:
@@ -232,24 +254,8 @@ class DeepSeekProvider(LLMProvider):
             client = self._get_client()
             client.models.list()
             return {"status": "ok", "details": []}
-        except Exception as e:
+        except Exception:
             return {
                 "status": "unavailable",
-                "details": [f"API connectivity check failed: {e}"],
+                "details": ["API connectivity check failed (provider_health_unavailable)."],
             }
-
-
-class ProviderError(Exception):
-    """Raised when an LLM Provider API call fails.
-
-    This covers: network errors, rate limits, API errors, timeouts.
-    """
-    pass
-
-
-class ProviderConfigError(Exception):
-    """Raised when an LLM Provider has invalid or missing configuration.
-
-    This covers: missing API keys, invalid endpoints, missing packages.
-    """
-    pass

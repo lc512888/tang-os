@@ -6,17 +6,17 @@ Components:
 - State Manager: Runtime state persistence & context hygiene
 """
 
-from src.kernel.identity import IdentityRuntime, IdentityProfile
-from src.kernel.invariant import InvariantEngine
-from src.kernel.state import StateManager
-from src.kernel.models import (
+from kernel.identity import IdentityRuntime, IdentityProfile
+from kernel.invariant import InvariantEngine
+from kernel.state import StateManager
+from kernel.models import (
     IdentityLayer,
     InvariantID,
     RuntimeState,
     DecisionOutput,
 )
 
-__version__ = "0.1.0"
+from tang_os.version import __version__
 __all__ = [
     "IdentityRuntime",
     "IdentityProfile",

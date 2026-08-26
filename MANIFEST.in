@@ -1,4 +1,5 @@
 include README.md
+include VERSION
 include pyproject.toml
 include run_conformance.py
 recursive-include docs/09_public_specification *.md

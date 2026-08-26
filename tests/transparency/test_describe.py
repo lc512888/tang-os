@@ -1,7 +1,7 @@
 """Tests: Self Description Runtime — updated for schema v1.1."""
 
-from src.tang_os import Tang
-from src.tang_os.transparency.descriptor import SystemDescriptor
+from tang_os import Tang
+from tang_os.transparency.descriptor import SystemDescriptor
 
 
 class TestSystemDescriptor:
@@ -33,8 +33,15 @@ class TestSystemDescriptor:
     def test_yaml_output(self):
         yaml_str = SystemDescriptor().describe_yaml()
         assert "Tang OS" in yaml_str
-        assert "controlled_by: permission runtime" in yaml_str
+        import yaml
+        assert yaml.safe_load(yaml_str)["authority"]["execution_authority"]["controlled_by"] == "Permission Runtime"
         assert "permitted: false" in yaml_str
+
+    def test_verification_does_not_claim_stale_live_evidence(self):
+        verification = SystemDescriptor().describe()["verification"]
+        assert verification["test_count"] is None
+        assert verification["conformance"] == "not_run"
+        assert "no test report" in verification["evidence_source"]
 
 
 class TestTangDescribe:
@@ -59,14 +66,14 @@ class TestTangDescribe:
             assert term not in desc_str, f"Marketing term found: {term}"
 
     def test_describe_does_not_modify_identity(self):
-        from src.kernel.identity import IdentityRuntime
+        from kernel.identity import IdentityRuntime
         rt = IdentityRuntime()
         before = rt.current_layer
         SystemDescriptor().describe()
         assert rt.current_layer == before
 
     def test_describe_does_not_expose_memory(self):
-        from src.runtime.memory.memory_store import MemoryStore
+        from runtime.memory.memory_store import MemoryStore
         store = MemoryStore()
         before = store.stats()["total"]
         SystemDescriptor().describe()

@@ -3,7 +3,7 @@
 Developers build Extensions here. They cannot create personas.
 """
 
-from src.tang_os_sdk.manifest.models import ManifestModel
+from tang_os_sdk.manifest.models import ManifestModel
 
 
 class TangExtension:

@@ -5,7 +5,7 @@ Defines the "law of permitted action" for Tang OS.
 
 from dataclasses import dataclass, field
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 
@@ -42,7 +42,7 @@ class AuthorityGrant:
     authority_type: AuthorityType
     scope: list[ActionScope]
     sap_level: SAPLevel
-    granted_at: datetime = field(default_factory=datetime.now)
+    granted_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     expires_at: datetime | None = None
     reason: str = ""
     granted_by: str = "user"
@@ -51,7 +51,10 @@ class AuthorityGrant:
     def is_active(self) -> bool:
         if self.expires_at is None:
             return True
-        return datetime.now() < self.expires_at
+        expires_at = self.expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.astimezone(timezone.utc)
+        return datetime.now(timezone.utc) < expires_at.astimezone(timezone.utc)
 
 
 @dataclass

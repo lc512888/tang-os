@@ -8,6 +8,6 @@ Usage:
     desc = SystemDescriptor().describe()
 """
 
-from src.tang_os.transparency.descriptor import SystemDescriptor
+from tang_os.transparency.descriptor import SystemDescriptor
 
 __all__ = ["SystemDescriptor"]

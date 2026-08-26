@@ -5,8 +5,8 @@ Core question:
     and what it cannot do?
 """
 
-from src.tang_os_sdk.manifest.models import ManifestModel
-from src.tang_os_sdk.manifest.validator import ManifestValidator
+from tang_os_sdk.manifest.models import ManifestModel
+from tang_os_sdk.manifest.validator import ManifestValidator
 
 # C1~C4 permission ceilings
 CATEGORY_CEILING = {"C1": "A1", "C2": "A2", "C3": "A3", "C4": "A4"}

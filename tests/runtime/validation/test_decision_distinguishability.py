@@ -13,13 +13,13 @@ _TEST_PERSONALITY = os.path.join(_TEST_MODULES, "test_personality")
 
 
 def _session(path):
-    from src.runtime.personality_loader import PersonalityLoader
-    from src.runtime.session import RuntimeSession
+    from runtime.personality_loader import PersonalityLoader
+    from runtime.session import RuntimeSession
     return RuntimeSession(PersonalityLoader(path).load())
 
 
 def _decide(session, text):
-    from src.runtime.engine import DecisionEngine
+    from runtime.engine import DecisionEngine
     return DecisionEngine(session).evaluate(text)
 
 

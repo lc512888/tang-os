@@ -2,15 +2,25 @@
 
 ## 唐先生项目 · 文档导航首页
 
-Version: v0.1
+Version: v0.2 documentation index
+
+> **Repository scope / 仓库范围（2026-08-27）：** 本仓库只包含 Tang OS 参考实现。
+> `tang-ta` 与 `xiaotang` 是关联的外部项目/概念，不是本仓库中的可运行目录；下列研究与
+> 架构材料对它们的描述应作为项目愿景或历史背景阅读。当前代码事实以根目录 README 和
+> [完整双语报告](TANG_OS_FULL_REPORT_CN_EN.html) 为准。
+>
+> This repository contains the Tang OS reference implementation only. `tang-ta`
+> and `xiaotang` are related external projects/concepts, not runnable directories
+> here. Read references to them as vision or historical context; use the root
+> README and the [full bilingual report](TANG_OS_FULL_REPORT_CN_EN.html) for current code facts.
 
 ---
 
 ## What is Tang Project?
 
 唐先生项目探索的是**人格运行基础设施（Personality Runtime Infrastructure）**——
-让 AI 人格可以被定义、验证、运行和应用。它不是一个聊天应用；xiaotang 只是
-第一个基于它的验证产品。
+让 AI 人格可以被定义、验证、运行和应用。它不是一个聊天应用；关联项目
+`xiaotang` 在项目架构中被描述为验证产品，但不随本仓库发布。
 
 **核心论点：** 人格不是提示词，而是可加载、可验证、可运行的软件能力。
 

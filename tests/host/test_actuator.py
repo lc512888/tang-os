@@ -1,8 +1,8 @@
 """Tests: Actuator Permission Gate — HA-003 actuator must pass Permission Runtime."""
 
 import pytest
-from src.host.actuator import ActuatorGate
-from src.host.models import HostType, TAAL
+from host.actuator import ActuatorGate
+from host.models import HostType, TAAL
 
 
 def test_actuator_needs_permission():

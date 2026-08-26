@@ -15,9 +15,15 @@ import sys
 import os
 import json
 from datetime import datetime
+from pathlib import Path
 
-# Ensure project root is on path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+# Prefer the implementation in this checkout, matching ``run_conformance.py``.
+# This keeps the documented module command reproducible even when another
+# ``tang_os`` distribution is installed or present on PYTHONPATH.
+ROOT = Path(__file__).resolve().parents[2]
+SOURCE = ROOT / "src"
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(SOURCE))
 
 # ── Compliance Matrix: Spec ID → Test Case mapping ──────────────────────
 
@@ -56,7 +62,7 @@ def run_rig_tests() -> dict:
     print("RIG Gate Conformance Tests")
     print("=" * 60)
     result = run_pytest("RIG")
-    print(f"\nRIG Result: {'✅ PASS' if result['passed'] else '❌ FAIL'}\n")
+    print(f"\nRIG Result: {'PASS' if result['passed'] else 'FAIL'}\n")
     return result
 
 
@@ -66,16 +72,17 @@ def run_negative_tests() -> dict:
     print("Negative Conformance Tests (RI-006)")
     print("=" * 60)
     result = run_pytest("Reject")
-    print(f"\nNegative Result: {'✅ PASS' if result['passed'] else '❌ FAIL'}\n")
+    print(f"\nNegative Result: {'PASS' if result['passed'] else 'FAIL'}\n")
     return result
 
 
 def run_all() -> dict:
     """Run full conformance suite."""
+    from tang_os import __version__
     print("=" * 60)
     print("Tang OS Conformance Harness v1.0")
     print(f"Date: {datetime.now().isoformat()}")
-    print(f"Spec: v1.0 | Impl: v0.1.0")
+    print(f"Spec: v1.0 | Impl: v{__version__}")
     print("=" * 60)
 
     rig = run_rig_tests()
@@ -86,9 +93,9 @@ def run_all() -> dict:
     total_gates = len(COMPLIANCE_MATRIX)
     print("=" * 60)
     print(f"Compliance Matrix: {total_gates} spec entries mapped")
-    print(f"RIG Gates:        {'✅ PASS' if rig['passed'] else '❌ FAIL'}")
-    print(f"Negative Tests:   {'✅ PASS' if neg['passed'] else '❌ FAIL'}")
-    print(f"Overall:          {'✅ CONFORMANT' if passed else '❌ NON-CONFORMANT'}")
+    print(f"RIG Gates:        {'PASS' if rig['passed'] else 'FAIL'}")
+    print(f"Negative Tests:   {'PASS' if neg['passed'] else 'FAIL'}")
+    print(f"Overall:          {'CONFORMANT' if passed else 'NON-CONFORMANT'}")
     print("=" * 60)
 
     return {
@@ -97,7 +104,7 @@ def run_all() -> dict:
         "negative": neg,
         "timestamp": datetime.now().isoformat(),
         "spec_version": "1.0",
-        "impl_version": "0.1.0",
+        "impl_version": __version__,
     }
 
 

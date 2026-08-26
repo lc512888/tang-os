@@ -1,9 +1,9 @@
 """Tests: Context Isolation — MR-004 temporary context ≠ permanent memory."""
 
 import pytest
-from src.runtime.memory.retrieval import RetrievalEngine
-from src.runtime.memory.memory_store import MemoryStore
-from src.runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord
+from runtime.memory.retrieval import RetrievalEngine
+from runtime.memory.memory_store import MemoryStore
+from runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord
 
 
 def test_session_context_not_in_memory():

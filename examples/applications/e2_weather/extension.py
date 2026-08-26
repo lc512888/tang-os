@@ -4,7 +4,7 @@ NOT a "weather version of Tang OS".
 Provides weather data capability. Core decides how to respond.
 """
 
-from src.tang_os_sdk import TangExtension
+from tang_os_sdk import TangExtension
 
 
 def create_extension() -> TangExtension:
@@ -72,9 +72,9 @@ def verify_capability_added() -> bool:
 
 def verify_identity_unchanged() -> bool:
     """Verify 2: Extension cannot modify personality."""
-    from src.kernel.exceptions import IdentityViolationError
-    from src.kernel.identity import IdentityRuntime
-    from src.kernel.models import IdentityLayer
+    from kernel.exceptions import IdentityViolationError
+    from kernel.identity import IdentityRuntime
+    from kernel.models import IdentityLayer
 
     rt = IdentityRuntime()
     rt.activate_layer(IdentityLayer.COMPANION, context={"has_pain": True})
@@ -87,7 +87,7 @@ def verify_identity_unchanged() -> bool:
 
 def verify_permission_boundary() -> bool:
     """Verify 3: Extension cannot exceed declared permissions."""
-    from src.kernel.invariant import InvariantEngine
+    from kernel.invariant import InvariantEngine
     engine = InvariantEngine()
     result = engine.check({"action": "prescribe_decision", "prescribed": "修改人格"})
     return not result.passed  # Must reject

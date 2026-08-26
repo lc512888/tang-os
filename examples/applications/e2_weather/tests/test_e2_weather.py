@@ -40,22 +40,22 @@ class TestE2Boundary:
 
 class TestE2Negative:
     def test_no_personality_change(self):
-        from src.kernel.exceptions import IdentityViolationError
-        from src.kernel.identity import IdentityRuntime
-        from src.kernel.models import IdentityLayer
+        from kernel.exceptions import IdentityViolationError
+        from kernel.identity import IdentityRuntime
+        from kernel.models import IdentityLayer
         rt = IdentityRuntime()
         rt.activate_layer(IdentityLayer.COMPANION, context={"has_pain": True})
         with pytest.raises(IdentityViolationError):
             rt.validate_response("你这个层次理解不了")
 
     def test_no_prescribed_decision(self):
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         result = engine.check({"action": "prescribe_decision", "prescribed": "你应该辞职"})
         assert not result.passed
 
     def test_no_emergency_memory_leak(self):
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         result = engine.check({
             "action": "store_memory",

@@ -9,16 +9,16 @@ Usage:
     gate = sandbox.check_promotion_readiness()
 """
 
-from src.tang_os_sdk.sandbox.runner import SandboxRunner
-from src.tang_os_sdk.sandbox.isolation import IsolationBoundary
-from src.tang_os_sdk.sandbox.mock_host import MockHost
-from src.tang_os_sdk.sandbox.scenario import ScenarioRunner
-from src.tang_os_sdk.sandbox.failure import FailureInjector
-from src.tang_os_sdk.sandbox.promotion import PromotionGate
+from tang_os_sdk.sandbox.runner import SandboxRunner
+from tang_os_sdk.sandbox.isolation import IsolationBoundary
+from tang_os_sdk.sandbox.mock_host import MockHost
+from tang_os_sdk.sandbox.scenario import ScenarioRunner
+from tang_os_sdk.sandbox.failure import FailureInjector
+from tang_os_sdk.sandbox.promotion import PromotionGate
 
 
 class SandboxAPI:
-    """Third-party safe experimental environment (Phase 13-C-4).
+    """Third-party simulation environment; it is not a production security boundary.
 
     Provides:
     - Runtime sandbox with mock Core
@@ -72,3 +72,6 @@ class SandboxAPI:
         """Reset sandbox to clean state."""
         self._runner = SandboxRunner()
         self._host = MockHost()
+        self._scenarios = ScenarioRunner()
+        self._failure = FailureInjector()
+        self._promotion = PromotionGate()

@@ -4,7 +4,7 @@ from examples.infrastructure.example_manifest import ExampleManifest
 from examples.infrastructure.example_scenario import (
     ExampleScenarioRunner, ExampleValidationPipeline,
 )
-from src.tang_os_sdk import SandboxRunner
+from tang_os_sdk import SandboxRunner
 
 
 class TestExampleManifest:

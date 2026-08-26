@@ -1,9 +1,11 @@
 """Memory Lifecycle — MR-003 Capture → Classify → Validate → Store → Retrieve → Decay/Archive."""
 
-from datetime import datetime
-from src.runtime.memory.memory_store import MemoryStore
-from src.runtime.memory.memory_policy import MemoryPolicy
-from src.runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord, MemoryStats
+from collections import deque
+from copy import deepcopy
+from datetime import datetime, timezone
+from runtime.memory.memory_store import MemoryStore
+from runtime.memory.memory_policy import MemoryPolicy
+from runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord, MemoryStats
 
 # Default TTLs per class
 _DEFAULT_TTL: dict[MemoryClass, int | None] = {
@@ -24,11 +26,11 @@ class MemoryLifecycle:
         self._store = MemoryStore()
         self._policy = MemoryPolicy()
         self._archive: list[MemoryRecord] = []
-        self._rejected: list[dict] = []
+        self._rejected: deque[dict] = deque(maxlen=100)
 
     @property
     def archive(self) -> list[MemoryRecord]:
-        return list(self._archive)
+        return deepcopy(self._archive)
 
     def process(self, item: MemoryItem) -> dict:
         """Process a memory item through the full lifecycle.
@@ -39,6 +41,9 @@ class MemoryLifecycle:
         - ttl: int or None
         - reason: str (if rejected)
         """
+        if not isinstance(item, MemoryItem):
+            raise TypeError("item must be a MemoryItem")
+        item = deepcopy(item)
         if not isinstance(item.cls, MemoryClass):
             raise ValueError(f"Invalid memory class: {item.cls}")
 
@@ -53,9 +58,9 @@ class MemoryLifecycle:
         validation = self._policy.validate(item)
         if not validation["valid"]:
             self._rejected.append({
-                "item": item,
+                "class": item.cls.value,
                 "reason": validation["reason"],
-                "timestamp": datetime.now(),
+                "timestamp": datetime.now(timezone.utc),
             })
             return {
                 "stored": False,
@@ -69,9 +74,9 @@ class MemoryLifecycle:
             record = self._store.store(item)
         except (ValueError, PermissionError) as e:
             self._rejected.append({
-                "item": item,
+                "class": item.cls.value,
                 "reason": str(e),
-                "timestamp": datetime.now(),
+                "timestamp": datetime.now(timezone.utc),
             })
             return {
                 "stored": False,
@@ -91,24 +96,18 @@ class MemoryLifecycle:
         """Retrieve active (non-expired) memories."""
         return self._store.retrieve(query)
 
+    def snapshot(self) -> list[MemoryRecord]:
+        """Return a detached snapshot of active records."""
+        return self._store.snapshot()
+
     def tick(self) -> int:
         """Run decay cycle — archive expired records.
 
         Returns count of archived records.
         """
-        now = datetime.now()
-        still_active: list[MemoryRecord] = []
-        archived_count = 0
-
-        for record in self._store._records:
-            if record.expires_at is not None and record.expires_at <= now:
-                self._archive.append(record)
-                archived_count += 1
-            else:
-                still_active.append(record)
-
-        self._store._records = still_active
-        return archived_count
+        expired = self._store.archive_expired()
+        self._archive.extend(expired)
+        return len(expired)
 
     def stats(self) -> dict:
         """Return lifecycle statistics."""
