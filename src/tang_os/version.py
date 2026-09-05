@@ -5,7 +5,6 @@ build backend. Installed distributions read that value from package metadata;
 source checkouts fall back to the root file.
 """
 
-from importlib.metadata import PackageNotFoundError, version as package_version
 from pathlib import Path
 
 __author__ = "上海群阅信息科技有限公司"
@@ -15,6 +14,12 @@ def _implementation_version() -> str:
     version_file = Path(__file__).resolve().parents[2] / "VERSION"
     if version_file.is_file():
         return version_file.read_text(encoding="utf-8").strip()
+
+    # Keep the source-checkout import path lightweight and offline. Importing
+    # package metadata eagerly pulls networking-related stdlib modules into a
+    # cold ``import tang_os`` on supported Python versions.
+    from importlib.metadata import PackageNotFoundError, version as package_version
+
     try:
         return package_version("tang-os")
     except PackageNotFoundError:

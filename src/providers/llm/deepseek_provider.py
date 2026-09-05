@@ -89,6 +89,16 @@ class DeepSeekProvider(LLMProvider):
     def requires_api_key(self) -> bool:
         return True
 
+    @property
+    def is_configured(self) -> bool:
+        """Whether required provider settings are present.
+
+        Optional client-package availability is checked by ``validate_config``
+        before an API operation, but it does not change whether the adapter's
+        own settings are configured.
+        """
+        return bool(self._api_key and self._model and self._base_url)
+
     def validate_config(self) -> list[str]:
         """Validate configuration before making API calls."""
         issues = []
