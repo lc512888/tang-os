@@ -10,13 +10,13 @@ Components:
 - HostRuntime: cross-host orchestrator
 """
 
-from src.host.host_runtime import HostRuntime
-from src.host.manifest import ManifestValidator
-from src.host.adapter import HostAdapter
-from src.host.sensor import SensorProcessor
-from src.host.actuator import ActuatorGate
-from src.host.isolation import FailureIsolation
-from src.host.models import HostType, TAAL, HostManifest, InternalState
+from host.host_runtime import HostRuntime
+from host.manifest import ManifestValidator
+from host.adapter import HostAdapter
+from host.sensor import SensorProcessor
+from host.actuator import ActuatorGate
+from host.isolation import FailureIsolation
+from host.models import HostType, TAAL, HostManifest, InternalState
 
 __all__ = [
     "HostRuntime",

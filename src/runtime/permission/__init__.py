@@ -8,12 +8,12 @@ Components:
 - PermissionRuntime: orchestrator
 """
 
-from src.runtime.permission.permission_runtime import PermissionRuntime
-from src.runtime.permission.consent import ConsentManager
-from src.runtime.permission.emergency import EmergencyAuthority
-from src.runtime.permission.scope import ScopeEnforcer
-from src.runtime.permission.recovery import RecoveryManager
-from src.runtime.permission.models import (
+from runtime.permission.permission_runtime import PermissionRuntime
+from runtime.permission.consent import ConsentManager
+from runtime.permission.emergency import EmergencyAuthority
+from runtime.permission.scope import ScopeEnforcer
+from runtime.permission.recovery import RecoveryManager
+from runtime.permission.models import (
     PermissionContext, PermissionVerdict, AuthorityGrant,
     ActionScope, SAPLevel, AuthorityType,
 )

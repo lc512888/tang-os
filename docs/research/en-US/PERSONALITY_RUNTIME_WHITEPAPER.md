@@ -1,5 +1,9 @@
 # Personality Runtime Whitepaper
 
+> **Scope note (2026-08-27):** This is a vision and research draft. This repository
+> contains only the Tang OS alpha reference implementation; statements about `tang-ta`,
+> `xiaotang`, real users, or deployment are not reproducible capabilities of this repository.
+
 ## From Language Models to Stable AI Personalities
 
 Version 0.1
@@ -360,8 +364,9 @@ not a matter of whether a personality "looks like" itself.
 
 - The runtime is frozen; personality logic contains **zero personality
   hardcoding** in the runtime layer.
-- Tang OS ships with a production test suite (344+) plus future-runtime
-  validation tests (69, ADR-0057 experimental engine — see ADR-0061).
+- Validation comprises the regular suite and the ADR-0057 experimental
+  validations under `tests/runtime/`; use CI or release evidence for the
+  exact result of the current commit (see ADR-0061 for scope).
 - Evaluation follows a blind-validation principle: judges do not bias
   toward expected answers.
 

@@ -1,8 +1,8 @@
 """Tests: Host Manifest Validation — HSV-001 / HM-012 Host Authority Ceiling."""
 
 import pytest
-from src.host.manifest import ManifestValidator
-from src.host.models import HostType, TAAL
+from host.manifest import ManifestValidator
+from host.models import HostType, TAAL
 
 
 def test_valid_manifest_passes():

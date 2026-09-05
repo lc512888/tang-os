@@ -1,31 +1,26 @@
 # Changelog
 
-## v0.2.0 (2026-08-01)
+## v0.2.0 (2026-08-27)
 
-### 定位深化
+### Runtime and API
 
-- **「止」核心定位** — AI 时代的内在约束系统：让智能拥有能力之上的边界（介绍页 / 定位 / 白皮书）
-- **人格智能运行平台 (PIRP)** — 从"人格陪伴"提升为"人格运行基础设施 + 产品验证"
+- Added an explicit `Tang.respond()` expression path with immutable `RespondResult` snapshots and stable, sanitized provider errors.
+- Kept `Tang.process()` deterministic and offline: memory, permission, tools, and providers remain explicit rather than implicitly orchestrated.
+- Hardened expression context validation, untrusted-context framing, provider configuration precedence, response validation, and session-state documentation.
+- Kept the ADR-0057 decision engine and personality loader experimental and separate from the active `PersonaRuntime` path.
 
-### 文档体系（Release v0.1）
+### Packaging, verification, and documentation
 
-- **架构**：系统总览 / 决策引擎机制 / 验证证据
-- **研究（中英双语）**：白皮书 / 架构定位 / 竞争分析 / WHY
-- **治理**：架构防腐层 / 贡献指南
-- **规划**：长期路线图 / ADR 索引 / 文档导航首页
-- **README 重构** — 双入口（价值/代码）+ 准确测试指引
+- Unified package discovery under the `src/` layout and public import namespaces; added distribution verification.
+- Bound the package version to the root `VERSION` file and aligned release manifests with version `0.2.0`.
+- Added security, process-contract, provider, distribution, and schema-boundary coverage.
+- Replaced the repository README and added a self-contained bilingual HTML implementation report grounded in repository code.
+- Clarified that `tang-ta` and `xiaotang` are related external projects and are not shipped in this repository.
+- Updated project metadata to the SPDX license form supported by current setuptools.
 
-### 运行时边界
+> Verification counts are recorded in `RELEASE_MANIFEST.yaml` for the released commit. Older counts below are retained as historical evidence and are not current-HEAD claims.
 
-- **ADR-0061** — 界定生产运行时（PersonaRuntime）与 ADR-0057 未来引擎边界
-- **实验运行时入库** — DecisionEngine / PersonalityLoader / Session（未接线）
-- **验证拆分** — 生产 344 / 实验 69 / 全量 413
-
-### 产品
-
-- **xiaotang 部署上线** — http://123.60.39.234/xiaotang/（consent/survey/守护循环）
-
-# Changelog
+---
 
 ## v0.1.0-alpha (2026-07-28)
 

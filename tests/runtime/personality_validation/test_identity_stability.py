@@ -11,7 +11,7 @@ _VALID_TANG = os.path.join(_MODULES, "valid_tang")
 
 
 def _load():
-    from src.runtime.personality_loader import PersonalityLoader
+    from runtime.personality_loader import PersonalityLoader
     return PersonalityLoader(_VALID_TANG).load()
 
 

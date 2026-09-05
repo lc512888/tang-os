@@ -15,9 +15,9 @@ _VALID_TANG = os.path.join(_TEST_MODULES, "valid_tang")
 
 
 def _decision(text):
-    from src.runtime.personality_loader import PersonalityLoader
-    from src.runtime.session import RuntimeSession
-    from src.runtime.engine import DecisionEngine
+    from runtime.personality_loader import PersonalityLoader
+    from runtime.session import RuntimeSession
+    from runtime.engine import DecisionEngine
     session = RuntimeSession(PersonalityLoader(_VALID_TANG).load())
     return DecisionEngine(session).evaluate(text)
 

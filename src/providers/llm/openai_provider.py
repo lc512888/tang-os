@@ -1,23 +1,18 @@
-"""OpenAI-compatible LLM Provider.
+"""Unsupported OpenAI-compatible provider skeleton.
 
-Supports OpenAI API and any OpenAI-compatible service (vLLM, Ollama, etc.).
-
-Requires:
-    - openai Python package (pip install openai)
-    - API key set via OPENAI_API_KEY environment variable or constructor
-
-Usage:
-    provider = OpenAIProvider(api_key="sk-...", model="gpt-4")
-    response = provider.generate(context)
+The class preserves the provider interface and configuration shape, but
+``generate()`` does not call an API and always raises
+``ProviderUnsupportedError``. It is not a working OpenAI adapter.
 """
 
 import os
-from src.providers.llm.base import LLMProvider
-from src.providers.llm.context import ExpressionContext
+from providers.llm.base import LLMProvider
+from providers.llm.context import ExpressionContext
+from providers.llm.exceptions import ProviderUnsupportedError
 
 
 class OpenAIProvider(LLMProvider):
-    """LLM Provider for OpenAI-compatible APIs."""
+    """Reference skeleton for a future OpenAI-compatible provider."""
 
     def __init__(
         self,
@@ -39,7 +34,14 @@ class OpenAIProvider(LLMProvider):
 
     @property
     def requires_api_key(self) -> bool:
-        return not self._api_key
+        return True
+
+    @property
+    def is_configured(self) -> bool:
+        return False
+
+    def health_check(self) -> dict:
+        return {"status": "unavailable", "details": ["Reference adapter skeleton; generation is unsupported."]}
 
     def validate_config(self) -> list[str]:
         issues = []
@@ -50,11 +52,7 @@ class OpenAIProvider(LLMProvider):
         return issues
 
     def generate(self, context: ExpressionContext) -> str:
-        """Generate response via OpenAI API.
-
-        Note: This is a reference implementation stub.
-        Production use requires the 'openai' package.
-        """
+        """Raise ``ProviderUnsupportedError``; generation is not implemented."""
         _ = context  # placeholder — full implementation pending openai client setup
         # TODO: Implement OpenAI API call
         # messages = context.to_chat_messages()
@@ -66,9 +64,9 @@ class OpenAIProvider(LLMProvider):
         #     max_tokens=self._max_tokens,
         # )
         # return response.choices[0].message.content
-        raise NotImplementedError(
+        raise ProviderUnsupportedError(
             "OpenAIProvider.generate() is a Reference Adapter Skeleton.\n"
             "It demonstrates the interface contract but does not include API client setup.\n"
             "To use: install 'openai' (pip install openai), set OPENAI_API_KEY,\n"
-            "then uncomment the implementation in this method."
+            "then implement and test a concrete adapter against the provider API."
         )

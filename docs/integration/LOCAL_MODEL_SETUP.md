@@ -1,6 +1,7 @@
 # Local Model Setup Guide
 
-> 接入本地模型作为 Tang OS 的 LLM Provider。
+> **状态：接口骨架，不可运行。** 当前 `LocalLLMProvider.generate()` 明确返回
+> `ProviderUnsupportedError`；以下服务部署步骤仅供未来实现适配器时参考。
 >
 > 适合离线场景、隐私敏感场景或不想依赖外部 API 的开发环境。
 
@@ -37,7 +38,7 @@ ollama serve
 ### 4. 使用
 
 ```python
-from src.providers.llm import LocalLLMProvider, ExpressionContext
+from providers.llm import LocalLLMProvider, ExpressionContext
 
 provider = LocalLLMProvider(
     base_url="http://localhost:11434/v1",
@@ -45,6 +46,7 @@ provider = LocalLLMProvider(
     temperature=0.7,
     max_tokens=1024,
 )
+# provider.generate(...) 在当前版本不可用。
 ```
 
 ## 方式二：vLLM（生产级）

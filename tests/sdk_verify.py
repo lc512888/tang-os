@@ -1,5 +1,5 @@
 """Quick verification of SDK Skeleton."""
-from src.tang_os_sdk import ExtensionBuilder, ManifestValidator, SandboxRunner, ConformanceRunner
+from tang_os_sdk import ExtensionBuilder, ManifestValidator, SandboxRunner, ConformanceRunner
 
 # Test ExtensionBuilder
 builder = ExtensionBuilder("my_extension")

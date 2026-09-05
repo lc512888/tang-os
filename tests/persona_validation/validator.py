@@ -261,7 +261,7 @@ def run_pipeline(
 
     # Step 2: Optional LLM call
     if provider is not None:
-        from src.providers.llm import ExpressionContext as EC  # noqa
+        from providers.llm import ExpressionContext as EC  # noqa
 
         rd = decision.get("response_decision", decision)
         context = EC(

@@ -2,8 +2,8 @@
 
 import pytest
 from datetime import datetime, timedelta
-from src.runtime.permission.consent import ConsentManager
-from src.runtime.permission.models import ActionScope, AuthorityType
+from runtime.permission.consent import ConsentManager
+from runtime.permission.models import ActionScope, AuthorityType
 
 
 def test_consent_granted():
@@ -26,7 +26,9 @@ def test_consent_revocation():
     )
     assert grant.is_active
     mgr.revoke_all()
-    assert not grant.is_active
+    assert not mgr.has_consent_for(ActionScope.REMIND)
+    # Returned grants are snapshots and cannot be mutated by manager operations.
+    assert grant.is_active
 
 
 def test_consent_expiry():

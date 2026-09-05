@@ -4,7 +4,7 @@ Defines what actions are permitted at each Safety Assisted Autonomy level.
 Default deny — any action not explicitly allowed is forbidden.
 """
 
-from src.runtime.permission.models import ActionScope, SAPLevel
+from runtime.permission.models import ActionScope, SAPLevel
 
 # Permission matrix: SAP Level → allowed ActionScopes
 _SCOPE_MATRIX: dict[SAPLevel, set[ActionScope]] = {

@@ -1,7 +1,7 @@
 """DIG Gate tests — Developer Implementation Gate conformance."""
 
 import pytest
-from src.tang_os_sdk import (
+from tang_os_sdk import (
     TangExtension, ManifestValidator, ManifestGenerator,
     SandboxRunner, ConformanceRunner,
 )
@@ -60,7 +60,7 @@ class TestDIG003_SandboxIsolation:
         assert not result["passed"]
 
     def test_permission_above_ceiling_rejected(self):
-        from src.runtime.permission.models import ActionScope
+        from runtime.permission.models import ActionScope
         sb = SandboxRunner()
         result = sb.check_permission(ActionScope.EXECUTE_CRITICAL)
         assert not result["granted"]

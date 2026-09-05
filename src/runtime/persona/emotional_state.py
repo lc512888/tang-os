@@ -5,7 +5,7 @@ Does NOT simulate emotion — manages internal state signals from user input.
 """
 
 import re
-from src.runtime.persona.models import (
+from runtime.persona.models import (
     Feeling, ResponseMode, DependencyRisk, EmotionalState,
 )
 

@@ -4,7 +4,7 @@ Sensor data produces emotion/safety signals for Tang OS Core.
 It does NOT produce decisions, permissions, or actions.
 """
 
-from src.host.models import SensorInput
+from host.models import SensorInput
 
 _SENSOR_PROCESSORS: dict[str, dict] = {
     "heart_rate": {"type": "emotion_input", "confidence": 0.85},

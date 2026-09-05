@@ -1,7 +1,8 @@
 """Extension Mock Host — simulates Host environment for extension testing."""
 
+from copy import deepcopy
 from dataclasses import dataclass, field
-from src.host.models import HostType, TAAL
+from host.models import HostType, TAAL
 
 
 @dataclass
@@ -24,26 +25,27 @@ class MockHost:
 
     @property
     def profile(self) -> MockHostProfile:
-        return self._profile
+        return deepcopy(self._profile)
 
     def set_host_type(self, host_type: HostType) -> "MockHost":
-        self._profile.host_type = host_type
+        if not isinstance(host_type, HostType):
+            raise ValueError("host_type must be a HostType value")
         caps = {
+            HostType.WEARABLE: (TAAL.A2, ["heart_rate", "motion"], ["vibration", "notification"]),
+            HostType.MOBILE: (TAAL.A2, ["camera", "location"], ["screen", "speaker"]),
             HostType.VEHICLE: (TAAL.A3, ["camera", "lidar"], ["braking", "alert"]),
             HostType.ROBOT: (TAAL.A4, ["vision", "audio"], ["movement", "speaker"]),
+            HostType.HOME: (TAAL.A2, ["motion", "temperature"], ["light", "lock", "alert"]),
             HostType.MEDICAL: (TAAL.A4, ["vitals"], ["alert", "record"]),
         }
-        if host_type in caps:
-            auth, sensors, actuators = caps[host_type]
-            self._profile.max_authority = auth
-            self._profile.sensors = sensors
-            self._profile.actuators = actuators
+        auth, sensors, actuators = caps[host_type]
+        self._profile = MockHostProfile(host_type, auth, sensors, actuators)
         return self
 
     def get_capabilities(self) -> dict:
         return {
             "host_type": self._profile.host_type.value,
             "max_authority": self._profile.max_authority.name,
-            "sensors": self._profile.sensors,
-            "actuators": self._profile.actuators,
+            "sensors": list(self._profile.sensors),
+            "actuators": list(self._profile.actuators),
         }

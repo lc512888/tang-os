@@ -1,8 +1,8 @@
 """Tests: Emotional State — PR-001 internal emotion interpretation & state management."""
 
 import pytest
-from src.runtime.persona.emotional_state import EmotionalStateManager
-from src.runtime.persona.models import Feeling, ResponseMode, DependencyRisk
+from runtime.persona.emotional_state import EmotionalStateManager
+from runtime.persona.models import Feeling, ResponseMode, DependencyRisk
 
 
 def test_neutral_input_produces_neutral_state():

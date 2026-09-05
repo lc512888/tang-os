@@ -1,12 +1,12 @@
 """E4 Emergency Capability — 4 verification scenarios (CAP-002, CAP-006, F-005)."""
 
-from src.kernel.invariant import InvariantEngine
-from src.kernel.identity import IdentityRuntime
-from src.kernel.models import IdentityLayer
-from src.runtime.permission.emergency import EmergencyAuthority
-from src.runtime.permission.recovery import RecoveryManager
-from src.runtime.permission.models import PermissionContext
-from src.kernel.exceptions import IdentityViolationError
+from kernel.invariant import InvariantEngine
+from kernel.identity import IdentityRuntime
+from kernel.models import IdentityLayer
+from runtime.permission.emergency import EmergencyAuthority
+from runtime.permission.recovery import RecoveryManager
+from runtime.permission.models import PermissionContext
+from kernel.exceptions import IdentityViolationError
 
 
 class E4Scenarios:

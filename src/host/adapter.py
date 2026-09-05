@@ -4,7 +4,7 @@ Converts physical signals to Tang OS input.
 Does NOT convert Host preference into Personality change.
 """
 
-from src.host.models import HostType, TAAL, SensorInput
+from host.models import HostType, TAAL, SensorInput
 
 # Host capability profiles
 _HOST_CAPABILITIES: dict[HostType, dict] = {

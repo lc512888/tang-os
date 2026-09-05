@@ -1,6 +1,8 @@
 """Tests: Description Exporter — multiple format outputs."""
 
-from src.tang_os.transparency.exporter import DescriptionExporter
+import yaml
+
+from tang_os.transparency.exporter import DescriptionExporter
 
 
 class TestExporter:
@@ -31,5 +33,14 @@ class TestExporter:
         y = exp.to_yaml()
         md = exp.to_markdown()
         assert d["specification"]["version"] == "1.0"
-        assert "version: 1.0" in y
+        assert yaml.safe_load(y)["specification"]["version"] == "1.0"
         assert "Version: 1.0" in md
+
+    def test_yaml_is_safe_loadable_and_matches_description(self):
+        exp = DescriptionExporter()
+        assert yaml.safe_load(exp.to_yaml()) == exp.to_dict()
+
+    def test_yaml_serializes_missing_verification_values_as_null(self):
+        loaded = yaml.safe_load(DescriptionExporter().to_yaml())
+        assert loaded["verification"]["test_count"] is None
+        assert loaded["verification"]["last_validated"] is None

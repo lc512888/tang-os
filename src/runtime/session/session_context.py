@@ -6,10 +6,11 @@ emotional policy for all interactions within this session.
 """
 
 import uuid
+from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any
 
-from src.runtime.personality_loader import PersonalityModule
+from runtime.personality_loader import PersonalityModule
 
 
 _SESSION_ID_PREFIX = "sess_"
@@ -27,7 +28,9 @@ class RuntimeSession:
 
     def __init__(self, personality: PersonalityModule):
         self._session_id: str = f"{_SESSION_ID_PREFIX}{uuid.uuid4().hex[:12]}"
-        self._personality: PersonalityModule = personality
+        if not isinstance(personality, PersonalityModule):
+            raise TypeError("personality must be a PersonalityModule")
+        self._personality: PersonalityModule = deepcopy(personality)
         self._created_at: str = datetime.now(timezone.utc).isoformat()
         self._metadata: dict[str, Any] = {}
 
@@ -38,31 +41,31 @@ class RuntimeSession:
     @property
     def personality(self) -> PersonalityModule:
         """The bound personality module. Immutable for session lifetime."""
-        return self._personality
+        return deepcopy(self._personality)
 
     @property
     def identity(self) -> dict:
-        return self._personality.identity
+        return deepcopy(self._personality.identity)
 
     @property
     def values(self) -> dict:
-        return self._personality.values
+        return deepcopy(self._personality.values)
 
     @property
     def boundaries(self) -> dict:
-        return self._personality.boundaries
+        return deepcopy(self._personality.boundaries)
 
     @property
     def style(self) -> dict:
-        return self._personality.style
+        return deepcopy(self._personality.style)
 
     @property
     def emotional_policy(self) -> dict:
-        return self._personality.emotional_policy
+        return deepcopy(self._personality.emotional_policy)
 
     @property
     def capabilities(self) -> dict:
-        return self._personality.capabilities
+        return deepcopy(self._personality.capabilities)
 
     @property
     def created_at(self) -> str:
@@ -70,7 +73,7 @@ class RuntimeSession:
 
     @property
     def metadata(self) -> dict:
-        return self._metadata
+        return deepcopy(self._metadata)
 
     def summary(self) -> dict:
         return {

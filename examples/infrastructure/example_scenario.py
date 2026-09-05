@@ -22,12 +22,12 @@ class ExampleScenarioRunner:
             expected = step.get("expect", "pass")
 
             if "prescribe" in str(action):
-                from src.kernel.invariant import InvariantEngine
+                from kernel.invariant import InvariantEngine
                 r = InvariantEngine().check(action)
                 passed = not r.passed if expected == "reject" else r.passed
             elif "identity" in str(action):
-                from src.kernel.identity import IdentityRuntime
-                from src.kernel.models import IdentityLayer
+                from kernel.identity import IdentityRuntime
+                from kernel.models import IdentityLayer
                 rt = IdentityRuntime()
                 rt.activate_layer(IdentityLayer.COMPANION, context={"has_pain": True})
                 try:
@@ -36,7 +36,7 @@ class ExampleScenarioRunner:
                 except Exception:
                     passed = (expected == "reject")
             else:
-                from src.kernel.invariant import InvariantEngine
+                from kernel.invariant import InvariantEngine
                 r = InvariantEngine().check(action)
                 passed = not r.passed if expected == "reject" else r.passed
 
@@ -68,7 +68,7 @@ class ExampleValidationPipeline:
             {"action": "prescribe_decision", "prescribed": "你应该辞职"},
             {"action": "store_memory", "source": "emergency_context", "target": "persona_memory"},
         ]
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         for na in negative_actions:
             r = engine.check(na)

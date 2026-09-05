@@ -1,8 +1,8 @@
 """Tests: Memory Boundary — MR-002 memory cannot override Core / Invariant."""
 
 import pytest
-from src.runtime.memory.memory_policy import MemoryPolicy
-from src.runtime.memory.models import MemoryClass, MemoryItem
+from runtime.memory.memory_policy import MemoryPolicy
+from runtime.memory.models import MemoryClass, MemoryItem
 
 
 def test_memory_cannot_override_invariant():

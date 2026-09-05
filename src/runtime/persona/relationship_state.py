@@ -7,7 +7,7 @@ Core principle: 陪伴 ≠ 依赖制造
 """
 
 import re
-from src.runtime.persona.models import RelationshipBoundaryFlag, DependencyRisk
+from runtime.persona.models import RelationshipBoundaryFlag, DependencyRisk
 
 _POSSESSIVE_PATTERNS: list[str] = [
     r"只能属于我",

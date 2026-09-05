@@ -1,6 +1,6 @@
 """PersonalityRegistry — caches loaded personality modules."""
 
-from src.runtime.personality_loader import PersonalityLoader, PersonalityModule
+from runtime.personality_loader import PersonalityLoader, PersonalityModule
 
 
 class PersonalityRegistry:

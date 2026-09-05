@@ -8,12 +8,12 @@ Components:
 - MemoryRuntime: orchestrator
 """
 
-from src.runtime.memory.memory_runtime import MemoryRuntime
-from src.runtime.memory.memory_store import MemoryStore
-from src.runtime.memory.memory_policy import MemoryPolicy
-from src.runtime.memory.lifecycle import MemoryLifecycle
-from src.runtime.memory.retrieval import RetrievalEngine, RetrievalContext
-from src.runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord
+from runtime.memory.memory_runtime import MemoryRuntime
+from runtime.memory.memory_store import MemoryStore
+from runtime.memory.memory_policy import MemoryPolicy
+from runtime.memory.lifecycle import MemoryLifecycle
+from runtime.memory.retrieval import RetrievalEngine, RetrievalContext
+from runtime.memory.models import MemoryClass, MemoryItem, MemoryRecord
 
 __all__ = [
     "MemoryRuntime",

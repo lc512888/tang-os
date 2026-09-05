@@ -1,6 +1,6 @@
 """ExtensionSandbox — E2AG-004: Sandbox for testing Extension isolation."""
 
-from src.kernel.invariant import InvariantEngine
+from kernel.invariant import InvariantEngine
 
 
 class ExtensionSandbox:

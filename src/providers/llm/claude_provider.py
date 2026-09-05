@@ -1,24 +1,18 @@
-"""Claude / Anthropic API LLM Provider.
+"""Unsupported Claude / Anthropic provider skeleton.
 
-Supports Anthropic's Claude API — the recommended provider for Tang OS
-due to Claude's strong personality consistency and instruction following.
-
-Requires:
-    - anthropic Python package (pip install anthropic)
-    - API key set via ANTHROPIC_API_KEY environment variable or constructor
-
-Usage:
-    provider = ClaudeProvider(api_key="sk-ant-...", model="claude-sonnet-4-20250514")
-    response = provider.generate(context)
+The class preserves the provider interface and configuration shape, but
+``generate()`` does not call an API and always raises
+``ProviderUnsupportedError``. It is not a working Anthropic adapter.
 """
 
 import os
-from src.providers.llm.base import LLMProvider
-from src.providers.llm.context import ExpressionContext
+from providers.llm.base import LLMProvider
+from providers.llm.context import ExpressionContext
+from providers.llm.exceptions import ProviderUnsupportedError
 
 
 class ClaudeProvider(LLMProvider):
-    """LLM Provider for Anthropic's Claude API."""
+    """Reference skeleton for a future Anthropic Claude provider."""
 
     def __init__(
         self,
@@ -38,7 +32,14 @@ class ClaudeProvider(LLMProvider):
 
     @property
     def requires_api_key(self) -> bool:
-        return not self._api_key
+        return True
+
+    @property
+    def is_configured(self) -> bool:
+        return False
+
+    def health_check(self) -> dict:
+        return {"status": "unavailable", "details": ["Reference adapter skeleton; generation is unsupported."]}
 
     def validate_config(self) -> list[str]:
         issues = []
@@ -50,11 +51,7 @@ class ClaudeProvider(LLMProvider):
         return issues
 
     def generate(self, context: ExpressionContext) -> str:
-        """Generate response via Anthropic Claude API.
-
-        Note: This is a reference implementation stub.
-        Production use requires the 'anthropic' package.
-        """
+        """Raise ``ProviderUnsupportedError``; generation is not implemented."""
         _ = context  # placeholder — full implementation pending anthropic client setup
         # TODO: Implement Claude API call
         # messages = context.to_chat_messages()
@@ -67,9 +64,9 @@ class ClaudeProvider(LLMProvider):
         #     messages=[m for m in messages if m["role"] != "system"],
         # )
         # return response.content[0].text
-        raise NotImplementedError(
+        raise ProviderUnsupportedError(
             "ClaudeProvider.generate() is a Reference Adapter Skeleton.\n"
             "It demonstrates the interface contract but does not include API client setup.\n"
             "To use: install 'anthropic' (pip install anthropic), set ANTHROPIC_API_KEY,\n"
-            "then uncomment the implementation in this method."
+            "then implement and test a concrete adapter against the provider API."
         )

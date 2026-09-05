@@ -1,7 +1,7 @@
 """ManifestValidator — MG-001~004 checks with forbidden field detection."""
 
 from dataclasses import asdict
-from src.tang_os_sdk.manifest.models import ManifestModel
+from tang_os_sdk.manifest.models import ManifestModel
 
 VALID_CATEGORIES = {"C1", "C2", "C3", "C4"}
 VALID_RISK = {"low", "medium", "high", "critical"}

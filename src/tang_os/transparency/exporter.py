@@ -1,7 +1,7 @@
 """Description Exporter — multiple output formats (schema v1.1)."""
 
-from src.tang_os.transparency.schema import SystemDescription
-from src.tang_os.version import MANIFEST
+from tang_os.transparency.schema import SystemDescription
+from tang_os.version import MANIFEST
 
 
 class DescriptionExporter:
@@ -11,10 +11,6 @@ class DescriptionExporter:
         self._sd = SystemDescription()
         self._sd.specification.version = MANIFEST["specification"]["version"]
         self._sd.specification.compatible_implementation = MANIFEST["implementation"]["version"]
-        self._sd.verification.test_count = 306
-        self._sd.verification.test_pass_rate = "100%"
-        self._sd.verification.conformance = "PASS"
-        self._sd.verification.last_validated = "2026-07-27"
 
     def to_dict(self) -> dict:
         return self._sd.to_dict()

@@ -29,7 +29,7 @@ Thumbs.db
 .claude/
 .doc/
 archive/
-pytest_cache/
+.pytest_cache/
 CLAUDE.md
 CONTEXT_LOADING_POLICY.md
 

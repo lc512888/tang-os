@@ -3,7 +3,7 @@
 
 release:
   version: "0.2.0"
-  date: "2026-08-01"
+  date: "2026-08-27"
   specification: "v1.0"
   type: "reference_implementation"
 
@@ -43,14 +43,18 @@ contents:
     - "Blind Validation Protocol"
 
 governance:
-  adr_count: 46
-  adr_range: "ADR-0001~0046"
+  adr_count: 45
+  adr_range: "45 ADR files shipped: ADR-0001~0061 (non-contiguous; excludes ADR-TEMPLATE)"
   frozen: true
 
 verification:
-  tests: 324
+  command: "python -m pytest -q"
+  passed: 512
+  skipped: 4
   pass_rate: "100%"
   conformance: "PASS"
+  validated: "2026-08-27"
+  note: "Verification result for the final release worktree; historical documents may contain older snapshot counts."
 
 limitations:
   - "This release does NOT define Core Identity modification"

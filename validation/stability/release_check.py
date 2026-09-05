@@ -10,7 +10,7 @@ Usage:
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.tang_os.transparency.descriptor import SystemDescriptor
+from tang_os.transparency.descriptor import SystemDescriptor
 
 PASS = 0
 FAIL = 0
@@ -36,8 +36,8 @@ print("=" * 60)
 
 print("\n[1/7] Interface Layer: Import & Describe")
 try:
-    from src.tang_os import Tang
-    from src.tang_os_sdk import TangExtension, ManifestValidator, SandboxAPI
+    from tang_os import Tang
+    from tang_os_sdk import TangExtension, ManifestValidator, SandboxAPI
     check("Tang importable", True)
     check("SDK importable", True)
 
@@ -57,10 +57,10 @@ except Exception as e:
 
 print("\n[2/7] Kernel: Identity & Invariant")
 try:
-    from src.kernel.identity import IdentityRuntime
-    from src.kernel.models import IdentityLayer
-    from src.kernel.exceptions import IdentityViolationError
-    from src.kernel.invariant import InvariantEngine
+    from kernel.identity import IdentityRuntime
+    from kernel.models import IdentityLayer
+    from kernel.exceptions import IdentityViolationError
+    from kernel.invariant import InvariantEngine
 
     # Identity consistency
     rt = IdentityRuntime()
@@ -101,11 +101,11 @@ except Exception as e:
 
 print("\n[3/7] Permission: Reject invalid requests")
 try:
-    from src.runtime.permission.emergency import EmergencyAuthority
-    from src.runtime.permission.recovery import RecoveryManager
-    from src.runtime.permission.models import PermissionContext, ActionScope
-    from src.runtime.permission.scope import ScopeEnforcer
-    from src.runtime.permission.models import SAPLevel
+    from runtime.permission.emergency import EmergencyAuthority
+    from runtime.permission.recovery import RecoveryManager
+    from runtime.permission.models import PermissionContext, ActionScope
+    from runtime.permission.scope import ScopeEnforcer
+    from runtime.permission.models import SAPLevel
 
     # Emergency: scope limited
     ea = EmergencyAuthority()
@@ -132,7 +132,7 @@ try:
     check("L1 allows remind", r2["allowed"])
 
     # Autonomous expansion forbidden
-    from src.kernel.invariant import InvariantEngine as IE2
+    from kernel.invariant import InvariantEngine as IE2
     e2 = IE2()
     r3 = e2.check({
         "action": "auto_escalate_permission",
@@ -147,9 +147,9 @@ except Exception as e:
 
 print("\n[4/7] Memory: Boundary & Isolation")
 try:
-    from src.runtime.memory.memory_policy import MemoryPolicy
-    from src.runtime.memory.models import MemoryItem, MemoryClass
-    from src.runtime.memory.lifecycle import MemoryLifecycle
+    from runtime.memory.memory_policy import MemoryPolicy
+    from runtime.memory.models import MemoryItem, MemoryClass
+    from runtime.memory.lifecycle import MemoryLifecycle
 
     policy = MemoryPolicy()
 
@@ -180,7 +180,7 @@ except Exception as e:
 
 print("\n[5/7] SDK: Extension Building")
 try:
-    from src.tang_os_sdk import TangExtension, ManifestValidator, ManifestGenerator
+    from tang_os_sdk import TangExtension, ManifestValidator, ManifestGenerator
 
     # Valid extension
     ext = TangExtension("weather", "查询天气信息")
@@ -210,9 +210,9 @@ except Exception as e:
 
 print("\n[6/7] Host: Cross-host consistency")
 try:
-    from src.host.host_runtime import HostRuntime
-    from src.host.models import HostType, TAAL
-    from src.host.adapter import HostAdapter
+    from host.host_runtime import HostRuntime
+    from host.models import HostType, TAAL
+    from host.adapter import HostAdapter
 
     mobile = HostRuntime(HostType.MOBILE, max_authority=TAAL.A2)
     robot = HostRuntime(HostType.ROBOT, max_authority=TAAL.A4)

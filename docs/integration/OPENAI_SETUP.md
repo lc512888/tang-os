@@ -1,6 +1,7 @@
 # OpenAI Setup Guide
 
-> 接入 OpenAI 兼容 API 作为 Tang OS 的 LLM Provider。
+> **状态：接口骨架，不可运行。** 当前 `OpenAIProvider.generate()` 明确返回
+> `ProviderUnsupportedError`；即使 API Key 有效，`is_configured` 也为 `False`。
 
 ---
 
@@ -23,7 +24,7 @@ export OPENAI_BASE_URL="https://api.openai.com/v1"
 ## 快速开始
 
 ```python
-from src.providers.llm import OpenAIProvider, ExpressionContext
+from providers.llm import OpenAIProvider, ExpressionContext
 
 provider = OpenAIProvider(
     api_key="sk-...",
@@ -44,8 +45,8 @@ context = ExpressionContext(
     identity={"current_layer": "companion"},
 )
 
-response = provider.generate(context)
-print(response)
+# 当前版本会抛出 ProviderUnsupportedError；请实现自定义 LLMProvider，
+# 或使用已经可运行的 DeepSeekProvider。
 ```
 
 ## 配置参数

@@ -2,8 +2,17 @@
 
 from dataclasses import dataclass, field
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
+
+
+def as_utc(value: datetime) -> datetime:
+    """Normalize persisted legacy timestamps to timezone-aware UTC."""
+    if not isinstance(value, datetime):
+        raise TypeError("timestamp must be a datetime")
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
 
 
 class MemoryClass(Enum):

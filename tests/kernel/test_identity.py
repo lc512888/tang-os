@@ -1,9 +1,9 @@
 """Tests: Identity Runtime — Core-001 Identity Constitution enforcement."""
 
 import pytest
-from src.kernel.identity import IdentityRuntime, IdentityProfile
-from src.kernel.models import IdentityLayer
-from src.kernel.exceptions import IdentityViolationError
+from kernel.identity import IdentityRuntime, IdentityProfile
+from kernel.models import IdentityLayer
+from kernel.exceptions import IdentityViolationError
 
 
 def test_default_identity_is_listener():
@@ -72,7 +72,8 @@ def test_empty_response_is_not_dismissive():
     """Empty or caring responses should not be falsely flagged."""
     runtime = IdentityRuntime()
     # These should pass without error
-    runtime.validate_response("")  # empty
+    with pytest.raises(IdentityViolationError):
+        runtime.validate_response("")
     runtime.validate_response("我在听")  # listener-appropriate
     runtime.validate_response("这一定很难受")  # caring
 

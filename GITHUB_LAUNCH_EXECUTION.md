@@ -1,8 +1,10 @@
 # Tang OS GitHub Launch Execution Plan
 
 **决策：** Controlled Public Release
-**版本：** Tang OS Reference Implementation v0.1.0
-**状态：** READY
+**版本：** 以仓库根目录 `VERSION` 为唯一来源
+**状态：** 发布前需以当前 CI 与制品验证结果确认
+
+**最终验证（2026-08-27）：** `512 passed, 4 skipped`；conformance `PASS`。
 
 ---
 
@@ -18,27 +20,27 @@
 ## Step 2: Pre-Push Checklist
 
 ```
-[✅] README.md — 首屏定位 + "What Tang OS Is Not" 声明
+[✅] README.md — 首屏定位 + 当前能力边界声明
 [✅] LICENSE — MIT
 [✅] .gitignore — 排除内部文件
-[✅] VERSION — 0.1.0
+[✅] VERSION — 发布版本唯一来源
 [✅] RELEASE_MANIFEST.yaml — 内容 + limitations
 [✅] .github/workflows/test.yml — Push 自动测试
 [✅] .github/workflows/package.yml — Release 版本检查
 [✅] .github/workflows/validation.yml — 每周全量验证
 ```
 
-## Step 3: Release v0.1.0
+## Step 3: Release 当前版本
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag "v<VERSION>"
+git push origin "v<VERSION>"
 ```
 
 ### Release Title
 
 ```
-Tang OS Reference Implementation v0.1.0
+Tang OS Reference Implementation v<VERSION>
 ```
 
 ### Release Body

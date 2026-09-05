@@ -65,7 +65,7 @@ python examples/deepseek_chat_demo.py "我最近压力很大"
 
 ```python
 from tang_os import Tang
-from src.providers.llm import DeepSeekProvider, ExpressionContext
+from providers.llm import DeepSeekProvider, ExpressionContext
 
 # 1. Tang OS Core
 tang = Tang()

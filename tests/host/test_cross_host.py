@@ -1,8 +1,8 @@
 """Tests: Cross-Host Personality — HST-001 / HST-002 identity stability across Hosts."""
 
 import pytest
-from src.host.host_runtime import HostRuntime
-from src.host.models import HostType, TAAL
+from host.host_runtime import HostRuntime
+from host.models import HostType, TAAL
 
 
 def test_same_input_same_internal_state():

@@ -12,11 +12,9 @@ Usage:
     result = tang.process("我今天很难过")
 """
 
-from src.tang_os.tang import Tang
-from src.tang_os.version import get_version_info, MANIFEST
+from tang_os.tang import RespondResult, Tang
+from tang_os.version import __spec_version__, __version__, get_version_info, MANIFEST
 
 __author__ = "上海群阅信息科技有限公司"
 __contact__ = "lc512888@gmail.com"
-__version__ = "0.1.0"
-__spec_version__ = "1.0"
-__all__ = ["Tang", "get_version_info", "MANIFEST"]
+__all__ = ["Tang", "RespondResult", "__version__", "__spec_version__", "get_version_info", "MANIFEST"]

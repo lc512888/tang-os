@@ -21,25 +21,25 @@ def run_readiness_checks() -> dict:
 
     # 2. RI importable
     try:
-        from src.kernel.identity import IdentityRuntime
-        from src.kernel.invariant import InvariantEngine
-        from src.runtime.persona.persona_runtime import PersonaRuntime
-        from src.runtime.memory.memory_runtime import MemoryRuntime
-        from src.runtime.permission.permission_runtime import PermissionRuntime
+        from kernel.identity import IdentityRuntime
+        from kernel.invariant import InvariantEngine
+        from runtime.persona.persona_runtime import PersonaRuntime
+        from runtime.memory.memory_runtime import MemoryRuntime
+        from runtime.permission.permission_runtime import PermissionRuntime
         results["ri_importable"] = True
     except ImportError:
         results["ri_importable"] = False
 
     # 3. SDK importable
     try:
-        from src.tang_os_sdk import TangExtension, ManifestValidator, SandboxAPI
+        from tang_os_sdk import TangExtension, ManifestValidator, SandboxAPI
         results["sdk_importable"] = True
     except ImportError:
         results["sdk_importable"] = False
 
     # 4. Conformance executable
     try:
-        from src.tang_os_sdk import ConformanceRunner
+        from tang_os_sdk import ConformanceRunner
         cr = ConformanceRunner()
         cr_results = cr.run_all()
         results["conformance_pass"] = cr_results["success"]

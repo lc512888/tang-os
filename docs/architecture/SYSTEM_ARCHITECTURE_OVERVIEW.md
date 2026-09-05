@@ -5,6 +5,11 @@
 Version: v0.1
 目的：让一个不了解项目的人，在 10 分钟内理解整个系统。
 
+> **Scope note (2026-08-27):** 本文描述 Tang Project 的目标架构。当前仓库只包含
+> Tang OS；`tang-ta` 与 `xiaotang` 是外部关联项目，不可从本仓库复现。当前已接线
+> 路径为 `Tang → InvariantEngine → PersonaRuntime`，可选表达路径为
+> `Tang.respond() → LLMProvider`。当前事实详见根 README 与完整双语报告。
+
 > **一句话（人话版）：** 唐先生项目 = 人格运行平台（Tang OS）+ 人格模块标准（tang-ta）+ 一个验证产品（xiaotang）。这篇文档用一张图和五层分工讲清楚它们是怎么运作的。
 
 ---

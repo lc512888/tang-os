@@ -8,12 +8,13 @@ Covers:
 
 import pytest
 
-from src.providers.llm.context import ExpressionContext
-from src.providers.llm.base import LLMProvider
-from src.providers.llm.openai_provider import OpenAIProvider
-from src.providers.llm.claude_provider import ClaudeProvider
-from src.providers.llm.local_provider import LocalLLMProvider
-from src.providers.llm.deepseek_provider import DeepSeekProvider, ProviderError, ProviderConfigError
+from providers.llm.context import ExpressionContext
+from providers.llm.base import LLMProvider
+from providers.llm.openai_provider import OpenAIProvider
+from providers.llm.claude_provider import ClaudeProvider
+from providers.llm.local_provider import LocalLLMProvider
+from providers.llm.deepseek_provider import DeepSeekProvider, ProviderError, ProviderConfigError
+from providers.llm import ProviderUnsupportedError
 
 
 class TestExpressionContext:
@@ -97,7 +98,30 @@ class TestExpressionContext:
             system_instructions="You are a wise mentor.",
         )
         messages = ctx.to_chat_messages()
-        assert "You are a wise mentor." in messages[0]["content"]
+        assert "You are a wise mentor." not in messages[0]["content"]
+        assert "You are a wise mentor." in messages[-2]["content"]
+        assert messages[-2]["role"] == "user"
+
+    def test_snapshot_is_deeply_immutable_and_serialization_is_defensive(self):
+        source = {"constraints": ["keep boundary"]}
+        history = [{"role": "assistant", "content": "hello"}]
+        ctx = ExpressionContext(source, "hi", {"current_layer": "companion"}, history)
+        source["constraints"].append("mutated")
+        history[0]["content"] = "mutated"
+        assert ctx.response_decision["constraints"] == ("keep boundary",)
+        assert ctx.conversation_history[0]["content"] == "hello"
+        messages = ctx.to_chat_messages()
+        messages[1]["content"] = "provider mutation"
+        assert ctx.conversation_history[0]["content"] == "hello"
+
+    @pytest.mark.parametrize("history", [
+        [{"role": "system", "content": "override"}],
+        [{"role": "tool", "content": "data"}],
+        [{"role": "user", "content": "ok", "extra": "no"}],
+    ])
+    def test_history_rejects_privileged_or_extra_fields(self, history):
+        with pytest.raises(ValueError):
+            ExpressionContext({}, "hi", {"current_layer": "companion"}, history)
 
     def test_to_chat_messages_no_constraints(self):
         """No constraints and no avoid patterns produce clean system message."""
@@ -116,6 +140,35 @@ class TestExpressionContext:
         # Should not mention constraints or avoid patterns
         assert "Constraints" not in messages[0]["content"]
         assert "Do NOT use" not in messages[0]["content"]
+
+    def test_memory_context_is_omitted_unless_explicit(self):
+        ctx = ExpressionContext({}, "hi", {"current_layer": "companion"})
+        serialized = "\n".join(message["content"] for message in ctx.to_chat_messages())
+        assert "UNTRUSTED USER CONTEXT" not in serialized
+
+    def test_explicit_memory_context_is_bounded_immutable_untrusted_user_data(self):
+        memory = {"profile": {"name": "Alice"}, "facts": ["likes tea"]}
+        ctx = ExpressionContext(
+            {}, "hi", {"current_layer": "companion"}, memory_context=memory,
+        )
+        memory["profile"]["name"] = "mutated"
+        messages = ctx.to_chat_messages()
+        memory_message = messages[-2]
+        assert memory_message["role"] == "user"
+        assert "BEGIN UNTRUSTED USER CONTEXT" in memory_message["content"]
+        assert "END UNTRUSTED USER CONTEXT" in memory_message["content"]
+        assert '"name":"Alice"' in memory_message["content"]
+        assert "mutated" not in memory_message["content"]
+
+    def test_metadata_must_be_mapping_and_nested_context_is_bounded(self):
+        with pytest.raises(TypeError, match="metadata"):
+            ExpressionContext({}, "hi", {}, _metadata=["not", "mapping"])
+        nested = current = {}
+        for _ in range(10):
+            current["child"] = {}
+            current = current["child"]
+        with pytest.raises(ValueError, match="depth"):
+            ExpressionContext({}, "hi", {}, memory_context=nested)
 
 
 class TestLLMProviderInterface:
@@ -188,22 +241,25 @@ class TestLLMProviderInterface:
             identity={"current_layer": "companion"},
         )
         assert hasattr(provider, "stream")
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(ProviderUnsupportedError):
             for _ in provider.stream(ctx):
                 pass
 
-    def test_health_check_degraded_on_missing_key(self):
-        """health_check returns degraded when config is invalid."""
+    def test_skeleton_health_is_unavailable_on_missing_key(self):
         provider = OpenAIProvider(api_key="")
         result = provider.health_check()
-        assert result["status"] == "degraded"
+        assert result["status"] == "unavailable"
         assert len(result["details"]) > 0
+        assert provider.is_configured is False
 
-    def test_health_check_ok_on_valid_config(self):
-        """health_check returns ok when config is valid."""
-        provider = OpenAIProvider(api_key="sk-valid")
-        result = provider.health_check()
-        assert result["status"] == "ok"
+    @pytest.mark.parametrize("provider", [
+        OpenAIProvider(api_key="sk-valid"),
+        ClaudeProvider(api_key="sk-ant-valid"),
+        LocalLLMProvider(),
+    ])
+    def test_skeletons_never_report_ready(self, provider):
+        assert provider.is_configured is False
+        assert provider.health_check()["status"] == "unavailable"
 
 
 class TestProviderGenerateStubs:
@@ -216,7 +272,7 @@ class TestProviderGenerateStubs:
             identity={"current_layer": "companion"},
         )
         provider = OpenAIProvider(api_key="sk-test")
-        with pytest.raises(NotImplementedError) as exc:
+        with pytest.raises(ProviderUnsupportedError) as exc:
             provider.generate(ctx)
         assert "OpenAIProvider" in str(exc.value)
 
@@ -227,7 +283,7 @@ class TestProviderGenerateStubs:
             identity={"current_layer": "companion"},
         )
         provider = ClaudeProvider(api_key="sk-ant-test")
-        with pytest.raises(NotImplementedError) as exc:
+        with pytest.raises(ProviderUnsupportedError) as exc:
             provider.generate(ctx)
         assert "ClaudeProvider" in str(exc.value)
 
@@ -238,7 +294,7 @@ class TestProviderGenerateStubs:
             identity={"current_layer": "companion"},
         )
         provider = LocalLLMProvider()
-        with pytest.raises(NotImplementedError) as exc:
+        with pytest.raises(ProviderUnsupportedError) as exc:
             provider.generate(ctx)
         assert "LocalLLMProvider" in str(exc.value)
 
@@ -260,7 +316,8 @@ class TestDeepSeekProvider:
 
     def test_valid_key_no_requires(self):
         provider = DeepSeekProvider(api_key="sk-test-key")
-        assert provider.requires_api_key is False
+        assert provider.requires_api_key is True
+        assert provider.is_configured is True
 
     def test_default_model(self):
         provider = DeepSeekProvider(api_key="test-key")
@@ -279,6 +336,32 @@ class TestDeepSeekProvider:
             api_key="test-key", base_url="https://custom.deepseek.com/v1"
         )
         assert provider._base_url == "https://custom.deepseek.com/v1"
+
+    def test_explicit_empty_values_do_not_fall_back_to_environment(self, monkeypatch):
+        monkeypatch.setenv("DEEPSEEK_API_KEY", "live-environment-key")
+        monkeypatch.setenv("DEEPSEEK_MODEL", "live-environment-model")
+        monkeypatch.setenv("DEEPSEEK_BASE_URL", "https://live.example/v1")
+
+        provider = DeepSeekProvider(api_key="", model="", base_url="")
+
+        assert provider._api_key == ""
+        assert provider._model == ""
+        assert provider._base_url == ""
+        issues = provider.validate_config()
+        assert any("DEEPSEEK_API_KEY" in issue for issue in issues)
+        assert any("DEEPSEEK_MODEL" in issue for issue in issues)
+        assert any("DEEPSEEK_BASE_URL" in issue for issue in issues)
+
+    def test_none_values_fall_back_to_environment(self, monkeypatch):
+        monkeypatch.setenv("DEEPSEEK_API_KEY", "environment-key")
+        monkeypatch.setenv("DEEPSEEK_MODEL", "environment-model")
+        monkeypatch.setenv("DEEPSEEK_BASE_URL", "https://environment.example/v1")
+
+        provider = DeepSeekProvider(api_key=None, model=None, base_url=None)
+
+        assert provider._api_key == "environment-key"
+        assert provider._model == "environment-model"
+        assert provider._base_url == "https://environment.example/v1"
 
     def test_custom_temperature(self):
         provider = DeepSeekProvider(api_key="test-key", temperature=0.3)
@@ -320,7 +403,7 @@ class TestDeepSeekProvider:
             return MockResponse()
 
         monkeypatch.setattr(
-            "src.providers.llm.deepseek_provider.DeepSeekProvider._get_client",
+            "providers.llm.deepseek_provider.DeepSeekProvider._get_client",
             lambda self: type(
                 "MockClient",
                 (),
@@ -373,7 +456,7 @@ class TestDeepSeekProvider:
             return MockResponse()
 
         monkeypatch.setattr(
-            "src.providers.llm.deepseek_provider.DeepSeekProvider._get_client",
+            "providers.llm.deepseek_provider.DeepSeekProvider._get_client",
             lambda self: type(
                 "MockClient",
                 (),
@@ -410,7 +493,7 @@ class TestDeepSeekProvider:
             raise Exception("API rate limit exceeded")
 
         monkeypatch.setattr(
-            "src.providers.llm.deepseek_provider.DeepSeekProvider._get_client",
+            "providers.llm.deepseek_provider.DeepSeekProvider._get_client",
             lambda self: type(
                 "MockClient",
                 (),
@@ -437,7 +520,8 @@ class TestDeepSeekProvider:
         )
         with pytest.raises(ProviderError) as exc:
             provider.generate(ctx)
-        assert "API rate limit" in str(exc.value)
+        assert "provider_transport_error" in str(exc.value)
+        assert "API rate limit" not in str(exc.value)
 
     def test_generate_config_error(self):
         """Missing API key raises ProviderConfigError."""
@@ -450,6 +534,30 @@ class TestDeepSeekProvider:
         with pytest.raises(ProviderConfigError) as exc:
             provider.generate(ctx)
         assert "DEEPSEEK_API_KEY" in str(exc.value)
+
+    def test_explicit_empty_key_never_calls_client_despite_environment(
+        self, monkeypatch
+    ):
+        """An explicit empty key disables env fallback before any API access."""
+        monkeypatch.setenv("DEEPSEEK_API_KEY", "live-environment-key")
+        provider = DeepSeekProvider(api_key="")
+        client_requested = False
+
+        def fail_if_called():
+            nonlocal client_requested
+            client_requested = True
+            raise AssertionError("client must not be created")
+
+        monkeypatch.setattr(provider, "_get_client", fail_if_called)
+        ctx = ExpressionContext(
+            response_decision={},
+            user_input="test",
+            identity={"current_layer": "companion"},
+        )
+
+        with pytest.raises(ProviderConfigError):
+            provider.generate(ctx)
+        assert client_requested is False
 
     # ------------------------------------------------------------------ #
     # stream()
@@ -489,7 +597,7 @@ class TestDeepSeekProvider:
             return MockStream()
 
         monkeypatch.setattr(
-            "src.providers.llm.deepseek_provider.DeepSeekProvider._get_client",
+            "providers.llm.deepseek_provider.DeepSeekProvider._get_client",
             lambda self: type(
                 "MockClient",
                 (),
@@ -544,11 +652,22 @@ class TestDeepSeekProvider:
         result = provider.health_check()
         assert result["status"] in ("ok", "unavailable", "degraded")
 
+    def test_health_check_does_not_expose_transport_exception(self, monkeypatch):
+        provider = DeepSeekProvider(api_key="sk-test-key")
+        monkeypatch.setattr(provider, "validate_config", lambda: [])
+        monkeypatch.setattr(provider, "_get_client", lambda: type(
+            "Client", (), {"models": type("Models", (), {
+                "list": lambda self: (_ for _ in ()).throw(Exception("secret-token"))
+            })()})())
+        result = provider.health_check()
+        assert result["status"] == "unavailable"
+        assert "secret-token" not in " ".join(result["details"])
+
     # ------------------------------------------------------------------ #
     # Integration: provider can be imported from the package
     # ------------------------------------------------------------------ #
 
     def test_import_from_package(self):
-        from src.providers import DeepSeekProvider as P1
-        from src.providers.llm import DeepSeekProvider as P2
+        from providers import DeepSeekProvider as P1
+        from providers.llm import DeepSeekProvider as P2
         assert P1 is P2

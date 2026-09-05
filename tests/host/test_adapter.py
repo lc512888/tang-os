@@ -1,8 +1,8 @@
 """Tests: Host Adapter Neutrality — HA-001 identity protection."""
 
 import pytest
-from src.host.adapter import HostAdapter
-from src.host.models import HostType, TAAL, SensorInput
+from host.adapter import HostAdapter
+from host.models import HostType, TAAL, SensorInput
 
 
 def test_adapter_does_not_change_identity():

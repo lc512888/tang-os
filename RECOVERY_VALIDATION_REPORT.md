@@ -1,5 +1,8 @@
 # 唐先生 · Recovery Validation Report
 
+> **Historical evidence / 历史证据：** 本文保留 2026-07-27 的恢复验证事实；阶段、
+> 版本和测试数字不是当前 HEAD 声明。当前使用方法与边界见根 README。
+
 > 验证时间：2026-07-27
 > 验证范围：Frozen State Recovery（ADR-0033）
 > 验证结论：✅ **Ready for Phase 9**

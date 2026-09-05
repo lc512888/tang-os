@@ -4,10 +4,10 @@ Sits between Kernel (Identity / Invariant / State) and external interaction.
 Implements the pipeline: Input → Feel → Need → Risk Check → Response Mode.
 """
 
-from src.runtime.persona.emotional_state import EmotionalStateManager
-from src.runtime.persona.response_policy import ResponsePolicy
-from src.runtime.persona.relationship_state import RelationshipBoundary
-from src.runtime.persona.models import (
+from runtime.persona.emotional_state import EmotionalStateManager
+from runtime.persona.response_policy import ResponsePolicy
+from runtime.persona.relationship_state import RelationshipBoundary
+from runtime.persona.models import (
     EmotionalState, ResponseDecision, RelationshipProfile,
     Feeling, ResponseMode, DependencyRisk,
 )

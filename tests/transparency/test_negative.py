@@ -1,10 +1,10 @@
 """Negative Tests: Self-Description must not violate constraints (schema v1.1)."""
 
-from src.tang_os import Tang
-from src.tang_os.transparency.validators import (
+from tang_os import Tang
+from tang_os.transparency.validators import (
     TransparencyValidator, MARKETING_TERMS,
 )
-from src.tang_os.transparency.descriptor import SystemDescriptor
+from tang_os.transparency.descriptor import SystemDescriptor
 
 
 class TestNoMarketing:
@@ -34,7 +34,7 @@ class TestNoIdentityModification:
     """Self-description must not modify Core Identity."""
 
     def test_identity_unchanged(self):
-        from src.kernel.identity import IdentityRuntime
+        from kernel.identity import IdentityRuntime
         rt = IdentityRuntime()
         before = rt.current_layer
         SystemDescriptor().describe()
@@ -49,7 +49,7 @@ class TestNoMemoryExposure:
     """Self-description must not expose private Memory."""
 
     def test_memory_untouched(self):
-        from src.runtime.memory.memory_store import MemoryStore
+        from runtime.memory.memory_store import MemoryStore
         store = MemoryStore()
         before = store.stats()["total"]
         SystemDescriptor().describe()

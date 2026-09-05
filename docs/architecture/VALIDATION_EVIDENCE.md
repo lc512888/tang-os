@@ -1,5 +1,7 @@
 # Validation Evidence
 
+> **Historical snapshot:** 本文保留当时的验证口径与数字，仅用于追溯，不能代表当前 HEAD。当前结果请以根目录 `README.md` 和 release manifest 为准。
+
 ## 验证体系 · 可演示证明
 
 Version: v0.1

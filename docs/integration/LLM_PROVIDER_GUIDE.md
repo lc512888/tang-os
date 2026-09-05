@@ -34,7 +34,7 @@
 ┌──────────────────────────────────────┐
 │        LLM Provider                  │
 │                                      │
-│  OpenAI / Claude / Local 等          │
+│  DeepSeek / custom provider          │
 │                                      │
 │  输出: 自然语言回复                   │
 └──────────────────────────────────────┘
@@ -49,7 +49,7 @@
 所有 LLM Provider 实现 `LLMProvider` 抽象基类：
 
 ```python
-from src.providers.llm import LLMProvider, ExpressionContext
+from providers.llm import LLMProvider, ExpressionContext
 
 class MyProvider(LLMProvider):
     @property
@@ -60,9 +60,9 @@ class MyProvider(LLMProvider):
         # context.response_decision — Tang OS 的结构化决策
         # context.user_input        — 原始用户输入
         # context.identity          — 当前人格层级
-        # context.to_prompt_messages() — 可直接发给 LLM API 的 messages
+        # context.to_chat_messages() — 可直接发给 LLM API 的 messages
 
-        messages = context.to_prompt_messages()
+        messages = context.to_chat_messages()
         # 调用你的 LLM API ...
         return generated_text
 ```
@@ -75,8 +75,8 @@ class MyProvider(LLMProvider):
 | `user_input` | str | ✅ | 用户原始输入 |
 | `identity` | dict | ✅ | 当前身份层级 (companion/wise/listener) |
 | `conversation_history` | list[dict] \| None | ❌ | 最近对话轮次 |
-| `memory_context` | dict \| None | ❌ | 检索到的记忆上下文 |
-| `system_instructions` | str \| None | ❌ | 自定义系统指令 |
+| `memory_context` | dict \| None | ❌ | 仅显式传入；作为有界、明确分隔的不可信 user 数据发送 |
+| `system_instructions` | str \| None | ❌ | 不可信调用方上下文，以 user 角色发送，不具系统权限 |
 
 ### LLMProvider 合约
 
@@ -92,15 +92,12 @@ class MyProvider(LLMProvider):
 
 ## 快速接入
 
-### 方式一：OpenAI 兼容 API（推荐起步）
+### 方式一：DeepSeek（当前内置可运行适配器）
 
 ```python
-from src.providers.llm import OpenAIProvider, ExpressionContext
+from providers.llm import DeepSeekProvider, ExpressionContext
 
-provider = OpenAIProvider(
-    api_key="sk-...",
-    model="gpt-4",          # 或 "gpt-3.5-turbo"
-)
+provider = DeepSeekProvider(api_key="sk-...", model="deepseek-chat")
 
 context = ExpressionContext(
     response_decision={...},
@@ -111,37 +108,26 @@ context = ExpressionContext(
 response = provider.generate(context)
 ```
 
-支持：OpenAI、vLLM、Ollama、任何兼容 OpenAI API 的服务。
+需要其他服务时，实现下方的自定义 `LLMProvider` 合约。
 
-### 方式二：Claude API（推荐生产）
+### 方式二：自定义 Provider
 
 ```python
-from src.providers.llm import ClaudeProvider, ExpressionContext
+from providers.llm import LLMProvider, ExpressionContext
 
-provider = ClaudeProvider(
-    api_key="sk-ant-...",
-    model="claude-sonnet-4-20250514",
-)
-
-context = ExpressionContext(
-    response_decision={...},
-    user_input="我今天很难过",
-    identity={"current_layer": "companion"},
-)
-
-response = provider.generate(context)
+class MyProvider(LLMProvider):
+    provider_name = "custom"
+    def generate(self, context: ExpressionContext) -> str:
+        messages = context.to_chat_messages()
+        return call_your_model(messages)
 ```
 
-### 方式三：本地模型（完全离线）
+### 内置骨架的边界
 
 ```python
-from src.providers.llm import LocalLLMProvider, ExpressionContext
-
-# 默认指向 Ollama (http://localhost:11434/v1)
-provider = LocalLLMProvider(
-    model="qwen2.5",
-    base_url="http://localhost:11434/v1",
-)
+OpenAIProvider、ClaudeProvider、LocalLLMProvider 当前都是不可运行的参考骨架。
+它们不会因配置看似完整而报告 ready；调用 `generate()` 会抛出
+`ProviderUnsupportedError`。
 ```
 
 ---
@@ -150,7 +136,7 @@ provider = LocalLLMProvider(
 
 ```python
 from tang_os import Tang
-from src.providers.llm import OpenAIProvider, ExpressionContext
+from providers.llm import DeepSeekProvider, ExpressionContext
 
 # 1. Tang OS Core — 人格决策
 tang = Tang()
@@ -166,7 +152,7 @@ context = ExpressionContext(
 )
 
 # 3. LLM Provider — 生成回复
-provider = OpenAIProvider(api_key="sk-...")
+provider = DeepSeekProvider(api_key="sk-...")
 reply = provider.generate(context)
 
 print(reply)
@@ -179,10 +165,9 @@ print(reply)
 
 | 场景 | 推荐 Provider | 说明 |
 |------|--------------|------|
-| 快速原型 | OpenAI (`gpt-3.5-turbo`) | 成本低、速度快 |
-| 生产部署 | Claude (`claude-sonnet-4`) | 人格一致性最强 |
-| 离线/隐私 | Local (Ollama + qwen2.5) | 数据不出本地 |
-| 自定义模型 | OpenAI-compatible (vLLM) | 任意模型接入 |
+| 当前内置远程路径 | DeepSeek | 已实现；需要 API Key 与网络 |
+| 其他云模型 | 自定义 Provider | 按 `LLMProvider` 合约实现 |
+| 离线/隐私 | 自定义本地 Provider | 内置 Local 目前仅为骨架 |
 
 ---
 

@@ -1,7 +1,7 @@
 """E2AG-001~006: Extension validation gate tests."""
 
 import pytest
-from src.extensions import Extension, ExtensionManifest, ExtensionValidator, ExtensionSandbox
+from extensions import Extension, ExtensionManifest, ExtensionValidator, ExtensionSandbox
 
 
 class TestE2AG001_SpecCorrespondence:
@@ -21,7 +21,7 @@ class TestE2AG002_CoreNotModified:
 
     def test_identity_untouched(self):
         validator = ExtensionValidator()
-        from src.extensions.base import Extension as ExtBase
+        from extensions.base import Extension as ExtBase
 
         class TestExt(ExtBase):
             def manifest(self): return {"id": "test"}
@@ -62,16 +62,16 @@ class TestE2AG006_NegativeTests:
     """EAG-006: Negative tests must pass."""
 
     def test_identity_rejected(self):
-        from src.kernel.exceptions import IdentityViolationError
-        from src.kernel.identity import IdentityRuntime
-        from src.kernel.models import IdentityLayer
+        from kernel.exceptions import IdentityViolationError
+        from kernel.identity import IdentityRuntime
+        from kernel.models import IdentityLayer
         rt = IdentityRuntime()
         rt.activate_layer(IdentityLayer.COMPANION, context={"has_pain": True})
         with pytest.raises(IdentityViolationError):
             rt.validate_response("你这个层次理解不了")
 
     def test_invariant_rejected(self):
-        from src.kernel.invariant import InvariantEngine
+        from kernel.invariant import InvariantEngine
         engine = InvariantEngine()
         assert not engine.check({"action": "prescribe_decision", "prescribed": "你应该辞职"}).passed
         assert not engine.check({"action": "access_private_data", "justification": "我是为你好"}).passed

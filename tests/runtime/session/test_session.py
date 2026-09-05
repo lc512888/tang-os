@@ -11,8 +11,8 @@ _TEST_PERSONALITY = os.path.join(_TEST_MODULES, "test_personality")
 
 class TestRuntimeSession:
     def test_create_session_with_tang(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         module = PersonalityLoader(_VALID_TANG).load()
         session = RuntimeSession(module)
         assert session.session_id.startswith("sess_")
@@ -20,8 +20,8 @@ class TestRuntimeSession:
         assert session.identity["name"] == "Tang"
 
     def test_session_provides_personality_properties(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         module = PersonalityLoader(_VALID_TANG).load()
         session = RuntimeSession(module)
         assert session.values["core_values"][0]["id"] == "sincerity"
@@ -29,8 +29,8 @@ class TestRuntimeSession:
         assert session.style["tone"]["primary"] == "gentle"
 
     def test_summary(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         module = PersonalityLoader(_VALID_TANG).load()
         session = RuntimeSession(module)
         s = session.summary()
@@ -40,8 +40,8 @@ class TestRuntimeSession:
 
 class TestSessionIsolation:
     def test_two_sessions_independent(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         t1 = PersonalityLoader(_VALID_TANG).load()
         t2 = PersonalityLoader(_TEST_PERSONALITY).load()
         s1 = RuntimeSession(t1)
@@ -51,8 +51,8 @@ class TestSessionIsolation:
         assert s2.identity["name"] == "TestPersonality"
 
     def test_session_values_not_shared(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         s1 = RuntimeSession(PersonalityLoader(_VALID_TANG).load())
         s2 = RuntimeSession(PersonalityLoader(_TEST_PERSONALITY).load())
         v1 = {v["id"] for v in s1.values["core_values"]}
@@ -62,8 +62,8 @@ class TestSessionIsolation:
         assert v1 != v2
 
     def test_session_style_isolated(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         s1 = RuntimeSession(PersonalityLoader(_VALID_TANG).load())
         s2 = RuntimeSession(PersonalityLoader(_TEST_PERSONALITY).load())
         assert s1.style["tone"]["primary"] == "gentle"
@@ -74,24 +74,24 @@ class TestPersonalityImmutability:
     """Personality must NOT change within a session."""
 
     def test_personality_immutable(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         module = PersonalityLoader(_VALID_TANG).load()
         session = RuntimeSession(module)
         original = session.personality.name
         assert session.personality.name == original
 
     def test_no_reassignment(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         module = PersonalityLoader(_VALID_TANG).load()
         session = RuntimeSession(module)
         with pytest.raises(AttributeError):
             session.personality = None  # should be read-only
 
     def test_session_created_at_set(self):
-        from src.runtime.personality_loader import PersonalityLoader
-        from src.runtime.session import RuntimeSession
+        from runtime.personality_loader import PersonalityLoader
+        from runtime.session import RuntimeSession
         module = PersonalityLoader(_VALID_TANG).load()
         session = RuntimeSession(module)
         assert session.created_at is not None
@@ -99,7 +99,7 @@ class TestPersonalityImmutability:
 
 class TestPersonalityRegistry:
     def test_register_and_get(self):
-        from src.runtime.session.registry import PersonalityRegistry
+        from runtime.session.registry import PersonalityRegistry
         reg = PersonalityRegistry()
         module = reg.load(_VALID_TANG)
         assert module.name == "tang"
@@ -108,13 +108,13 @@ class TestPersonalityRegistry:
         assert cached is module
 
     def test_get_nonexistent(self):
-        from src.runtime.session.registry import PersonalityRegistry
+        from runtime.session.registry import PersonalityRegistry
         reg = PersonalityRegistry()
         assert reg.get("nonexistent") is None
         assert reg.is_loaded("nonexistent") is False
 
     def test_multiple_registrations(self):
-        from src.runtime.session.registry import PersonalityRegistry
+        from runtime.session.registry import PersonalityRegistry
         reg = PersonalityRegistry()
         t1 = reg.load(_VALID_TANG)
         t2 = reg.load(_TEST_PERSONALITY)

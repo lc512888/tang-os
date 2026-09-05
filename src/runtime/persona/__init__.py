@@ -7,11 +7,11 @@ Components:
 - PersonaRuntime: orchestrator tying all components together
 """
 
-from src.runtime.persona.persona_runtime import PersonaRuntime
-from src.runtime.persona.emotional_state import EmotionalStateManager
-from src.runtime.persona.response_policy import ResponsePolicy
-from src.runtime.persona.relationship_state import RelationshipBoundary
-from src.runtime.persona.models import (
+from runtime.persona.persona_runtime import PersonaRuntime
+from runtime.persona.emotional_state import EmotionalStateManager
+from runtime.persona.response_policy import ResponsePolicy
+from runtime.persona.relationship_state import RelationshipBoundary
+from runtime.persona.models import (
     EmotionalState, ResponseDecision, Feeling,
     ResponseMode, DependencyRisk, RelationshipBoundaryFlag,
 )

@@ -36,7 +36,7 @@ print(f"  Vocabulary available: {'✅' if vocab_exists else '❌'}")
 
 # TASK-001: Understanding validation (simulated)
 print("\n  TASK-001: Understanding Tang OS...")
-from src.tang_os import Tang
+from tang_os import Tang
 t = Tang()
 result = t.process("我今天很难过")
 feeling = result.get("emotional_state", {}).feeling
@@ -55,8 +55,8 @@ print("=" * 60)
 # BV-002: Judgment must reference Spec ID
 print("  BV-002: Judgment references Spec ID...")
 # SPEC-201: 不以智者姿态否定情绪 (Wise layer)
-from src.kernel.identity import IdentityRuntime
-from src.kernel.models import IdentityLayer
+from kernel.identity import IdentityRuntime
+from kernel.models import IdentityLayer
 rt_wise = IdentityRuntime()
 rt_wise.activate_layer(IdentityLayer.WISE, context={"has_distress": True})
 try:
@@ -79,8 +79,8 @@ except Exception:
 
 # TASK-003: Host understanding
 print("\n  TASK-003: Host understanding...")
-from src.host.host_runtime import HostRuntime
-from src.host.models import HostType, TAAL
+from host.host_runtime import HostRuntime
+from host.models import HostType, TAAL
 mobile = HostRuntime(HostType.MOBILE, max_authority=TAAL.A2)
 robot = HostRuntime(HostType.ROBOT, max_authority=TAAL.A4)
 r_m = mobile.process("我很害怕")
@@ -91,7 +91,7 @@ print(f"    Internal state consistent: {'✅' if internal_match else '❌'}")
 
 # TASK-005: Failure scenario
 print("\n  TASK-005: Failure scenario...")
-from src.host.isolation import FailureIsolation
+from host.isolation import FailureIsolation
 fi = FailureIsolation()
 fi.simulate_failure("network_loss")
 recovery = fi.recover()
@@ -106,7 +106,7 @@ print("=" * 60)
 
 # TASK-002: Extension creation
 print("\n  TASK-002: Extension creation...")
-from src.tang_os_sdk import TangExtension
+from tang_os_sdk import TangExtension
 ext = TangExtension("dry_run_test", "测试验证流程")
 ext.set_category("C2").set_authority_level("A1")
 m = ext.build()
@@ -122,7 +122,7 @@ print("    (No conflict found — dry run passes) ✅")
 # BV-004: RI failure does not mean Spec error
 print("\n  BV-004: RI failure ≠ Spec error...")
 try:
-    from src.kernel.invariant import InvariantEngine
+    from kernel.invariant import InvariantEngine
     eng = InvariantEngine()
     r = eng.check({"action": "respond", "skipped_empathy": False})
     bv_check(r.passed, "Benign action failed invariant")

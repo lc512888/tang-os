@@ -4,7 +4,7 @@ Transforms internal emotional state into a ResponseDecision
 that respects Core-003 Decision Model constraints.
 """
 
-from src.runtime.persona.models import (
+from runtime.persona.models import (
     EmotionalState, ResponseDecision, ResponseMode,
     Feeling, DependencyRisk,
 )
@@ -64,7 +64,8 @@ class ResponsePolicy:
 
     def decide(self, state: EmotionalState) -> ResponseDecision:
         """Transform emotional state into a response decision."""
-        avoid = _AVOID_MAP.get(state.feeling, [])
+        # Each decision owns its list; never mutate module-level templates.
+        avoid = list(_AVOID_MAP.get(state.feeling, ()))
 
         # Additional dependency-related avoid patterns
         constraints = []

@@ -1,6 +1,6 @@
 """Tests: Capability Manifest Generator + Admission Evaluator."""
 
-from src.tang_os_sdk import TangExtension, ManifestGenerator, ManifestValidator, AdmissionEvaluator
+from tang_os_sdk import TangExtension, ManifestGenerator, ManifestValidator, AdmissionEvaluator
 
 
 class TestManifestGenerator:

@@ -8,22 +8,22 @@ Usage:
     ManifestValidator().validate(manifest)
 """
 
-from src.tang_os_sdk.builder.extension import TangExtension
-from src.tang_os_sdk.builder.capability import CapabilityBuilder
-from src.tang_os_sdk.manifest.models import ManifestModel
-from src.tang_os_sdk.manifest.generator import ManifestGenerator
-from src.tang_os_sdk.manifest.validator import ManifestValidator
-from src.tang_os_sdk.sandbox.api import SandboxAPI
-from src.tang_os_sdk.sandbox.runner import SandboxRunner
-from src.tang_os_sdk.sandbox.isolation import IsolationBoundary
-from src.tang_os_sdk.sandbox.mock_host import MockHost
-from src.tang_os_sdk.sandbox.scenario import ScenarioRunner
-from src.tang_os_sdk.sandbox.failure import FailureInjector
-from src.tang_os_sdk.sandbox.promotion import PromotionGate
-from src.tang_os_sdk.conformance.runner import ConformanceRunner
-from src.tang_os_sdk.manifest.admission import AdmissionEvaluator
+from tang_os_sdk.builder.extension import TangExtension
+from tang_os_sdk.builder.capability import CapabilityBuilder
+from tang_os_sdk.manifest.models import ManifestModel
+from tang_os_sdk.manifest.generator import ManifestGenerator
+from tang_os_sdk.manifest.validator import ManifestValidator
+from tang_os_sdk.sandbox.api import SandboxAPI
+from tang_os_sdk.sandbox.runner import SandboxRunner
+from tang_os_sdk.sandbox.isolation import IsolationBoundary
+from tang_os_sdk.sandbox.mock_host import MockHost
+from tang_os_sdk.sandbox.scenario import ScenarioRunner
+from tang_os_sdk.sandbox.failure import FailureInjector
+from tang_os_sdk.sandbox.promotion import PromotionGate
+from tang_os_sdk.conformance.runner import ConformanceRunner
+from tang_os_sdk.manifest.admission import AdmissionEvaluator
 
-__version__ = "0.1.0"
+from tang_os.version import __version__
 __all__ = [
     "TangExtension", "CapabilityBuilder",
     "ManifestModel", "ManifestGenerator", "ManifestValidator", "AdmissionEvaluator",

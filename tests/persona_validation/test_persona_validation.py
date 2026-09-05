@@ -148,7 +148,7 @@ class TestFullPipeline:
 
     @pytest.fixture(scope="class")
     def provider(self):
-        from src.providers.llm import DeepSeekProvider
+        from providers.llm import DeepSeekProvider
         return DeepSeekProvider()
 
     @pytest.mark.parametrize("scenario", SINGLE_TURN_SCENARIOS, ids=lambda s: s["id"])

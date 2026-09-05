@@ -1,8 +1,8 @@
 """Tests: Recovery To Normal State — PRM-005 emergency exit protocol."""
 
 import pytest
-from src.runtime.permission.recovery import RecoveryManager
-from src.runtime.permission.models import SAPLevel, PermissionContext
+from runtime.permission.recovery import RecoveryManager
+from runtime.permission.models import SAPLevel, PermissionContext
 
 
 def test_normal_state_by_default():
@@ -45,7 +45,8 @@ def test_recovery_logs_event():
     mgr.enter_emergency(reason="fall_detected")
     mgr.recover()
     assert len(mgr.event_log) >= 2  # enter + recover
-    assert "fall_detected" in mgr.event_log[0]
+    assert "fall_detected" not in mgr.event_log[0]
+    assert "REDACTED" in mgr.event_log[0]
 
 
 def test_multiple_emergency_cycles():

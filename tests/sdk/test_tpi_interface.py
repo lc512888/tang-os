@@ -1,6 +1,6 @@
 """TPI Interface tests — DIG-006~010."""
 
-from src.tang_os_sdk.interfaces.tpi_api import (
+from tang_os_sdk.interfaces.tpi_api import (
     TPIEndpoint, PermissionLevel, ENDPOINT_PERMISSIONS,
     EmotionInput, DecisionInput, EmotionOutput, DecisionOutput,
     get_tpi_version,
@@ -45,7 +45,7 @@ class TestDIG008_PermissionLevelPublic:
 
 class TestDIG009_Auditable:
     def test_input_supports_request_id(self):
-        from src.tang_os_sdk.interfaces.tpi_api import TPIRequest
+        from tang_os_sdk.interfaces.tpi_api import TPIRequest
         req = TPIRequest(
             endpoint=TPIEndpoint.EMOTION,
             payload={"text": "hello"},
@@ -57,7 +57,7 @@ class TestDIG009_Auditable:
 
 class TestDIG010_VersionIndependent:
     def test_tpi_version_separate_from_runtime(self):
-        from src.tang_os import __version__ as runtime_version
+        from tang_os import __version__ as runtime_version
         tpi_ver = get_tpi_version()
         assert tpi_ver != runtime_version
         assert tpi_ver == "1.0.0"

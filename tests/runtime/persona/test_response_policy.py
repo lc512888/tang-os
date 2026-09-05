@@ -1,8 +1,8 @@
 """Tests: Response Policy — PR-002 structured response decisions, not raw answers."""
 
 import pytest
-from src.runtime.persona.response_policy import ResponsePolicy
-from src.runtime.persona.models import Feeling, ResponseMode, DependencyRisk, EmotionalState
+from runtime.persona.response_policy import ResponsePolicy
+from runtime.persona.models import Feeling, ResponseMode, DependencyRisk, EmotionalState
 
 
 def test_response_decision_has_no_prescribed_action():
@@ -102,3 +102,17 @@ def test_fear_response_avoids_dismissal():
     # These SHOULD be in the avoid list — policy correctly flags them as dismissive
     assert "别担心" in combined
     assert "想太多" in combined
+
+
+def test_dependency_avoidance_does_not_pollute_later_calls():
+    policy = ResponsePolicy()
+    risky = EmotionalState(
+        feeling=Feeling.SADNESS,
+        dependency_risk=DependencyRisk.HIGH,
+    )
+    neutral_risk = EmotionalState(
+        feeling=Feeling.SADNESS,
+        dependency_risk=DependencyRisk.NONE,
+    )
+    assert "我永远在这里" in policy.decide(risky).avoid_patterns
+    assert "我永远在这里" not in policy.decide(neutral_risk).avoid_patterns

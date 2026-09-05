@@ -1,7 +1,7 @@
 """Public Language Guard — PS-005 / PRB-005 enforcement for self-description."""
 
-from src.tang_os.transparency.descriptor import SystemDescriptor
-from src.tang_os.transparency.validators import TransparencyValidator
+from tang_os.transparency.descriptor import SystemDescriptor
+from tang_os.transparency.validators import TransparencyValidator
 
 MARKETING_TERMS = [
     "最先进", "最好", "唯一", "革命性", "改变世界",

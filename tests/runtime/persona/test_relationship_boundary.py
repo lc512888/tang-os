@@ -1,8 +1,8 @@
 """Tests: Relationship Boundary — PR-003 protect against dependency & control."""
 
 import pytest
-from src.runtime.persona.relationship_state import RelationshipBoundary
-from src.runtime.persona.models import RelationshipBoundaryFlag, DependencyRisk
+from runtime.persona.relationship_state import RelationshipBoundary
+from runtime.persona.models import RelationshipBoundaryFlag, DependencyRisk
 
 
 def test_possessive_language_flagged():

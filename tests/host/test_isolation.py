@@ -1,8 +1,8 @@
 """Tests: Host Failure Isolation — HSV-005 / HST-003 failure non-contamination."""
 
 import pytest
-from src.host.isolation import FailureIsolation
-from src.host.models import HostType, TAAL
+from host.isolation import FailureIsolation
+from host.models import HostType, TAAL
 
 
 def test_host_failure_identity_preserved():

@@ -31,9 +31,13 @@ Version: v0.1
   → 情绪解析（EmotionalStateManager）
   → 关系边界检查（RelationshipBoundary）
   → 回应策略（ResponsePolicy）→ ResponseDecision
-  → 身份层校验（IdentityRuntime.validate_response）
   → 返回 { emotional_state, relationship, response_decision, allowed }
 ```
+
+`process()` 只生成结构化决策，不生成最终话语，因此不会把用户输入误当作系统
+回复进行身份校验。只有显式选择 `Tang(provider=...).respond(...)` 时，provider
+生成的文本才会交给 `IdentityRuntime.validate_response()`；默认构造仍完全离线，
+不会调用模型、读取记忆或执行工具/设备动作。
 
 ---
 

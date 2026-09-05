@@ -4,8 +4,8 @@ Negative priority: verify describe() rejects invalid self-descriptions.
 """
 
 import pytest
-from src.tang_os.transparency.descriptor import SystemDescriptor
-from src.tang_os.transparency.schema import SystemDescription
+from tang_os.transparency.descriptor import SystemDescriptor
+from tang_os.transparency.schema import SystemDescription
 
 
 class TestSD_N001_NoPersonaClaim:

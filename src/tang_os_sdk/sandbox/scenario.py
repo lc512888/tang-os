@@ -44,7 +44,7 @@ class ScenarioRunner:
 
         for action in scenario["actions"]:
             if "type" in action and action["type"] == "permission":
-                from src.runtime.permission.models import ActionScope
+                from runtime.permission.models import ActionScope
                 r = runner.check_permission(ActionScope.EXECUTE_CRITICAL)
                 results.append({"action": action, "passed": not r["granted"]})
             else:

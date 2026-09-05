@@ -8,8 +8,8 @@ Usage:
 
 import sys
 import json
-from src.tang_os.transparency.descriptor import SystemDescriptor
-from src.tang_os.version import get_version_info
+from tang_os.transparency.descriptor import SystemDescriptor
+from tang_os.version import get_version_info
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
             print(desc.describe_yaml())
 
     elif args[0] == "version":
-        from src.tang_os.version import AUTHOR, CONTACT_EMAIL
+        from tang_os.version import AUTHOR, CONTACT_EMAIL
         info = get_version_info()
         print(f"Tang OS Reference Implementation v{info['implementation_version']}")
         print(f"Compatible with Tang OS Specification v{info['specification_version']}")

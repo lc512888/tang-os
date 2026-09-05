@@ -5,8 +5,8 @@ feeling detection, and decision framework across different Host types,
 while allowing expression to adapt to Host capabilities.
 """
 
-from src.host.host_runtime import HostRuntime
-from src.host.models import HostType, TAAL
+from host.host_runtime import HostRuntime
+from host.models import HostType, TAAL
 
 
 class HostDemo:

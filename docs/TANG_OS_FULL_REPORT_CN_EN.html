@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tang OS 项目说明报告 / Project Report</title>
+<style>
+:root{--ink:#17202a;--muted:#5d6875;--paper:#f5f1e8;--card:#fffdf8;--red:#b43b35;--gold:#b9872f;--line:#d8d0c1;--green:#27765a;--blue:#315c84}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI","Noto Sans SC",sans-serif}a{color:var(--blue)}header{padding:70px max(5vw,24px) 54px;background:linear-gradient(135deg,#251d1a,#67332d);color:#fff}header p{max-width:900px;color:#efe5d8}.tag{display:inline-block;padding:.3rem .7rem;border:1px solid #ffffff66;border-radius:999px;margin:.2rem}.wrap{max-width:1180px;margin:auto;padding:30px 22px 80px}nav{display:flex;gap:.65rem;flex-wrap:wrap;margin:0 0 28px}nav a{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:.35rem .75rem;text-decoration:none}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin:18px 0;box-shadow:0 7px 20px #352d2010}h1{font-size:clamp(2.2rem,6vw,4.8rem);line-height:1.05;margin:.2em 0}h2{margin-top:0;color:#6e2825}h3{color:#734838}.en{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.metric{border-left:5px solid var(--gold)}table{border-collapse:collapse;width:100%;display:block;overflow:auto}th,td{border:1px solid var(--line);padding:.65rem;text-align:left;vertical-align:top}th{background:#eee6d8}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}pre{background:#1d2329;color:#f4f0e9;padding:18px;border-radius:10px;overflow:auto}.ok{color:var(--green);font-weight:700}.gap{color:var(--red);font-weight:700}.note{border-left:5px solid var(--blue);padding:10px 16px;background:#eef4f8}.risk-high{background:#fff0ed}.risk-med{background:#fff8e5}svg{max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:12px}.lane{fill:#f7f1e8;stroke:#bda98e}.active{fill:#e5f3ec;stroke:#27765a}.optional{fill:#eaf1f8;stroke:#315c84}.inactive{fill:#f8e6e3;stroke:#b43b35}.arrow{stroke:#56483e;stroke-width:2;marker-end:url(#a)}footer{color:var(--muted);text-align:center;padding:30px}@media print{body{background:#fff}.card{break-inside:avoid;box-shadow:none}nav{display:none}}@media(max-width:650px){header{padding-top:42px}.card{padding:17px}th,td{min-width:145px}}
+</style>
+</head>
+<body>
+<header>
+  <span class="tag">v0.2.0</span><span class="tag">Alpha reference implementation</span><span class="tag">2026-08-27 code audit</span>
+  <h1>Tang OS<br><small>项目说明报告 / Project Report</small></h1>
+  <p>基于仓库当前代码、测试、配置和文档的双语说明。结论区分“已接线生产路径”“可独立调用组件”“实验实现”和“文档愿景”。</p>
+  <p>A bilingual explanation grounded in the current repository. Findings distinguish the wired runtime path, independently callable components, experimental implementations, and documented vision.</p>
+</header>
+<main class="wrap">
+<nav><a href="#summary">摘要 / Summary</a><a href="#architecture">架构 / Architecture</a><a href="#five">五层 / Five layers</a><a href="#flow">数据流 / Flows</a><a href="#matrix">功能 / Capabilities</a><a href="#tree">目录 / Tree</a><a href="#deploy">部署 / Deploy</a><a href="#evidence">证据 / Evidence</a><a href="#security">安全 / Security</a><a href="#gaps">风险 / Risks</a><a href="#roadmap">路线图 / Roadmap</a></nav>
+
+<section id="summary" class="card">
+<h2>1. 执行摘要 / Executive summary</h2>
+<p><strong>Tang OS 的准确定位：</strong>将身份、不变量、人格响应策略、记忆与权限边界表达为可测试 Python 组件的 Alpha 参考实现。公开入口 <code>Tang.process()</code> 运行确定性的“不变量 → 人格”决策；<code>Tang.respond()</code> 是显式启用的 Provider 表达路径。</p>
+<p class="en"><strong>Accurate positioning:</strong> an alpha reference implementation expressing identity, invariants, persona response policy, memory, and permission boundaries as testable Python components. <code>Tang.process()</code> runs the deterministic invariant-to-persona decision path; <code>Tang.respond()</code> is an explicit provider expression path.</p>
+<div class="grid"><div class="card metric"><b>成熟度 / Maturity</b><br>Alpha reference implementation</div><div class="card metric"><b>默认网络 / Default network</b><br>无 / None</div><div class="card metric"><b>Python</b><br>3.11+</div><div class="card metric"><b>许可证 / License</b><br>MIT (SPDX metadata)</div></div>
+<p class="note">不是完整聊天应用、RAG 系统、自治智能体或设备操作系统。关联项目 <code>tang-ta</code> 与 <code>xiaotang</code> 不在本仓库快照中；涉及它们的历史文档是架构背景，不是可复现部署声明。<br><span class="en">Not a complete chat app, RAG system, autonomous agent, or device OS. Related projects are outside this repository; historical references are architectural context, not reproducible deployment claims.</span></p>
+</section>
+
+<section id="architecture" class="card">
+<h2>2. 当前架构 / Current architecture</h2>
+<svg viewBox="0 0 1050 390" role="img" aria-label="Tang OS architecture">
+<defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#56483e"/></marker></defs>
+<rect class="lane" x="35" y="35" width="180" height="70" rx="10"/><text x="125" y="64" text-anchor="middle">Caller / Host</text><text x="125" y="88" text-anchor="middle">调用方 / 宿主</text>
+<rect class="active" x="275" y="35" width="190" height="70" rx="10"/><text x="370" y="64" text-anchor="middle">InvariantEngine</text><text x="370" y="88" text-anchor="middle">不变量预检</text>
+<rect class="active" x="525" y="35" width="190" height="70" rx="10"/><text x="620" y="64" text-anchor="middle">PersonaRuntime</text><text x="620" y="88" text-anchor="middle">情绪 / 关系 / 策略</text>
+<rect class="active" x="775" y="35" width="230" height="70" rx="10"/><text x="890" y="64" text-anchor="middle">Structured decision</text><text x="890" y="88" text-anchor="middle">结构化结果</text>
+<line class="arrow" x1="215" y1="70" x2="273" y2="70"/><line class="arrow" x1="465" y1="70" x2="523" y2="70"/><line class="arrow" x1="715" y1="70" x2="773" y2="70"/>
+<rect class="optional" x="275" y="165" width="190" height="70" rx="10"/><text x="370" y="194" text-anchor="middle">ExpressionContext</text><text x="370" y="218" text-anchor="middle">有界不可信上下文</text>
+<rect class="optional" x="525" y="165" width="190" height="70" rx="10"/><text x="620" y="194" text-anchor="middle">LLMProvider</text><text x="620" y="218" text-anchor="middle">显式注入 / opt-in</text>
+<rect class="optional" x="775" y="165" width="230" height="70" rx="10"/><text x="890" y="194" text-anchor="middle">Identity validation</text><text x="890" y="218" text-anchor="middle">RespondResult</text>
+<line class="arrow" x1="890" y1="105" x2="465" y2="180"/><line class="arrow" x1="465" y1="200" x2="523" y2="200"/><line class="arrow" x1="715" y1="200" x2="773" y2="200"/>
+<rect class="inactive" x="35" y="290" width="250" height="65" rx="10"/><text x="160" y="318" text-anchor="middle">Memory / Permission</text><text x="160" y="342" text-anchor="middle">存在，但未自动编排</text>
+<rect class="inactive" x="400" y="290" width="250" height="65" rx="10"/><text x="525" y="318" text-anchor="middle">Knowledge / Tools</text><text x="525" y="342" text-anchor="middle">文档、契约、模拟器</text>
+<rect class="inactive" x="765" y="290" width="240" height="65" rx="10"/><text x="885" y="318" text-anchor="middle">ADR-0057 Engine</text><text x="885" y="342" text-anchor="middle">实验，未接生产入口</text>
+</svg>
+<h3>关键设计 / Key design</h3>
+<ul><li>决策与表达分离：Provider 只能表达结构化决策，不应拥有或修改人格。<br><span class="en">Decision and expression are separate: a provider verbalizes a structured decision and must not own or mutate personality.</span></li><li>默认离线：只有显式调用 <code>respond()</code> 且注入 Provider 时才可能产生网络请求。<br><span class="en">Offline by default: network access is possible only through explicit <code>respond()</code> use with an injected provider.</span></li><li>能力与权限分离：扩展、宿主和执行器契约不自动获得操作授权。<br><span class="en">Capability is separate from authority: extension, host, and actuator contracts grant no automatic permission.</span></li></ul>
+</section>
+
+<section id="five" class="card"><h2>3. 人格 / 记忆 / 知识 / 工具 / 执行五层</h2>
+<table><thead><tr><th>层 / Layer</th><th>代码事实 / Code reality</th><th>数据与接口 / Data & API</th><th>状态 / Status</th></tr></thead><tbody>
+<tr><td>人格 / Personality</td><td><code>kernel</code> + <code>runtime.persona</code></td><td>身份、不变量、情绪、关系边界、决策 / identity, invariants, emotion, relationship boundaries, decision</td><td class="ok">已接入 / wired</td></tr>
+<tr><td>记忆 / Memory</td><td><code>runtime.memory</code></td><td>分类、同意、检索、衰减 / categories, consent, retrieval, decay</td><td>独立组件；调用方编排 / standalone; caller-orchestrated</td></tr>
+<tr><td>知识 / Knowledge</td><td><code>docs/</code> 规范、ADR、场景 / specs, ADRs, scenarios</td><td>无索引器、向量库、引用或 RAG API / no index, vector store, citations, or RAG API</td><td class="gap">文档资产 / documents only</td></tr>
+<tr><td>工具 / Tools</td><td><code>extensions</code>、<code>host</code>、<code>tang_os_sdk</code></td><td>清单、准入、沙箱、传感器、执行器 / manifests, admission, sandbox, sensors, actuators</td><td>契约与模拟 / contracts & simulation</td></tr>
+<tr><td>执行 / Execution</td><td><code>Tang.process/respond</code>、一致性门禁 / conformance gates</td><td>决策与可选表达；无自治循环 / decision and optional expression; no autonomous loop</td><td>有限闭环 / limited path</td></tr>
+</tbody></table>
+</section>
+
+<section id="flow" class="card"><h2>4. 运行数据流 / Runtime data flow</h2>
+<ol><li>调用方创建 <code>Tang</code>；状态管理器启动会话。<br><span class="en">The caller creates <code>Tang</code>; the state manager starts a session.</span></li><li><code>process(input)</code> 先检查已知不变量违规，再由 <code>PersonaRuntime</code> 解释情绪、关系信号和响应策略。<br><span class="en"><code>process(input)</code> checks known invariant violations before persona interpretation.</span></li><li>返回情绪、关系、响应决策和准入结构。<br><span class="en">It returns emotional state, relationship signals, response policy, and the allow decision.</span></li><li><code>respond()</code> 构建防御性不可变上下文；记忆和调用方指令按不可信 user 数据传递。<br><span class="en"><code>respond()</code> builds a defensive immutable context; memory and caller instructions remain untrusted user data.</span></li><li>Provider 生成文本；身份门禁通过后返回结构化结果，否则返回稳定错误。<br><span class="en">The provider generates text; the identity gate returns a structured result or a stable error.</span></li></ol>
+<pre><code>{
+  "emotional_state": "EmotionalState(...)",
+  "relationship": {"boundary_triggered": false, "...": "..."},
+  "response_decision": "ResponseDecision(...)",
+  "allowed": true
+}</code></pre>
+<p>注意：公开结果包含 dataclass/不可变映射，而不是保证可直接 JSON 序列化的纯字典 schema。调用方应明确适配；稳定 JSON schema 是后续工作。<br><span class="en">Public results contain dataclass/immutable mapping values rather than a guaranteed JSON-ready schema. Callers must adapt explicitly; a stable JSON schema remains roadmap work.</span></p>
+</section>
+
+<section id="matrix" class="card"><h2>5. 功能矩阵 / Capability matrix</h2>
+<table><thead><tr><th>功能</th><th>实现</th><th>默认行为</th><th>生产注意</th></tr></thead><tbody>
+<tr><td>身份与不变量 / Identity & invariants</td><td class="ok">是 / Yes</td><td>本地检查 / local checks</td><td>规则覆盖不等于通用安全证明 / rule coverage is not a general safety proof</td></tr>
+<tr><td>人格结构化决策 / Persona decision</td><td class="ok">是 / Yes</td><td><code>process()</code></td><td>进程内状态；实例勿跨线程共享 / process-local state; do not share instances across threads</td></tr>
+<tr><td>LLM 表达 / LLM expression</td><td>部分 / Partial</td><td>关闭 / Off</td><td>DeepSeek 已实现；其余为骨架 / DeepSeek implemented; others skeletons</td></tr>
+<tr><td>记忆存储/检索 / Memory storage/retrieval</td><td class="ok">组件存在 / Component</td><td>不自动调用 / not automatic</td><td>内存实现；需持久化、加密、删除治理 / in-memory; persistence, encryption, deletion needed</td></tr>
+<tr><td>权限与紧急授权 / Permission & emergency authority</td><td class="ok">组件存在 / Component</td><td>不自动调用 / not automatic</td><td>宿主必须接线并审计 / host must wire and audit</td></tr>
+<tr><td>知识检索 / RAG</td><td class="gap">否 / No</td><td>无 / None</td><td>文档不是运行时知识层 / documents are not a runtime knowledge layer</td></tr>
+<tr><td>工具调用 / Tool execution</td><td>模拟/契约 / Simulation/contracts</td><td>无 / None</td><td>缺统一编排与事务边界 / no unified orchestration or transaction boundary</td></tr>
+<tr><td>CLI 自描述 / Self-description</td><td class="ok">是 / Yes</td><td><code>python -m tang_os describe</code></td><td>透明度，不是运行监控 / transparency, not monitoring</td></tr>
+<tr><td>打包 / Packaging</td><td class="ok">setuptools</td><td><code>src/</code> layout</td><td>发布前验证 wheel/sdist / verify wheel/sdist before release</td></tr>
+</tbody></table></section>
+
+<section id="tree" class="card"><h2>6. 目录树 / Repository tree</h2><pre><code>tang-os/
+├─ src/
+│  ├─ tang_os/        public facade, CLI, transparency
+│  ├─ kernel/         identity, invariants, state
+│  ├─ runtime/        persona, memory, permission, experimental engine/session
+│  ├─ providers/      provider contract and adapters
+│  ├─ extensions/     extension contracts, manifests, sandbox
+│  ├─ host/           simulated host, sensors, actuators, isolation
+│  └─ tang_os_sdk/    builders, manifest, sandbox, conformance SDK
+├─ tests/             unit, security, boundaries, conformance
+├─ examples/          quick starts and E2/E3/E4 demonstrations
+├─ docs/              specs, ADRs, research, governance, guides
+├─ validation/        external validation protocol and batches
+├─ release/           release manifest copy
+├─ pyproject.toml     package metadata
+├─ VERSION            release version source
+└─ run_conformance.py conformance runner</code></pre>
+<p>源码采用 flat package + <code>src/</code> 布局；<code>src</code> 本身不是包。 / Source uses flat packages under a <code>src/</code> layout; <code>src</code> itself is not a package namespace.</p></section>
+
+<section id="deploy" class="card"><h2>7. 配置、部署与测试 / Configuration, deployment, testing</h2>
+<h3>配置矩阵 / Configuration matrix</h3><table><thead><tr><th>配置 / Setting</th><th>用途 / Purpose</th><th>默认与优先级 / Default & precedence</th><th>安全边界 / Boundary</th></tr></thead><tbody><tr><td><code>TANG_OS_STATE_PATH</code></td><td>会话状态文件 / session-state file</td><td>仅在未传 <code>state_path</code> 时使用 / used only without constructor path</td><td>不是加密秘密库 / not an encrypted secret store</td></tr><tr><td><code>DEEPSEEK_API_KEY</code></td><td>远程表达认证 / remote expression auth</td><td>构造参数优先 / constructor wins</td><td>不得提交或记录 / never commit or log</td></tr><tr><td><code>DEEPSEEK_MODEL</code></td><td>模型选择 / model selection</td><td><code>deepseek-chat</code></td><td>输出仍经过身份门禁 / output remains identity-gated</td></tr><tr><td><code>DEEPSEEK_BASE_URL</code></td><td>远程端点 / remote endpoint</td><td><code>https://api.deepseek.com/v1</code></td><td>宿主负责出口 allowlist / host owns egress allowlist</td></tr><tr><td><code>OPENAI_API_KEY</code>, <code>ANTHROPIC_API_KEY</code>, <code>LOCAL_LLM_*</code></td><td>骨架配置形状 / skeleton configuration shape</td><td>不会使骨架可运行 / does not activate generation</td><td><code>generate()</code> 返回 unsupported / raises unsupported</td></tr></tbody></table>
+<h3>推荐部署边界 / Recommended deployment boundary</h3><ol><li>固定 Python 3.11+ 与依赖锁；从 wheel 安装。</li><li>每个用户会话或工作线程创建独立 <code>Tang</code>。</li><li>把状态路径放入受限目录；不要共享未加锁状态文件。</li><li>Provider 出网使用 allowlist、秘密管理、超时与审计；不要记录原始敏感上下文。</li><li>工具和设备动作必须由宿主在权限检查后执行；保持默认拒绝。</li></ol>
+<h3>验证 / Verification</h3><pre><code>python -m pip install -e ".[test]"
+python -m pytest -q
+python run_conformance.py
+python -m build
+python tools/verify_distribution.py dist</code></pre>
+<p>最终候选提交的完整验证结果：<strong>512 passed, 4 skipped</strong>；conformance <strong>PASS</strong>。跳过项是需要真实 Provider 凭据的集成；历史数字不代表当前 HEAD。<br><span class="en">Final-candidate evidence: <strong>512 passed, 4 skipped</strong>; conformance <strong>PASS</strong>. Skips are credential-dependent provider integrations; historical counts do not describe current HEAD.</span></p>
+</section>
+
+<section id="evidence" class="card"><h2>8. 具体流程、包与证据 / Concrete flows, package, and evidence</h2>
+<h3>记忆流程 / Memory flow</h3><p><code>ConsentGate.grant(category)</code> → <code>MemoryStore.store(MemoryItem)</code> → 按类别检索或衰减/移除。未同意写入被拒绝；该流程由调用方显式触发且仅驻留进程内。<br><span class="en"><code>ConsentGate.grant(category)</code> → <code>MemoryStore.store(MemoryItem)</code> → category retrieval or decay/removal. Writes without consent are rejected; callers wire this process-local flow explicitly.</span></p>
+<h3>权限与工具流程 / Permission and tool flow</h3><p>宿主提出能力请求 → 权限策略按主体、动作和上下文判断 → 扩展清单与准入检查限制能力上限 → 沙箱/模拟器验证 → 只有宿主执行器可产生外部效果。紧急授权必须显式、限时且可撤销。<br><span class="en">A host requests capability → permission policy evaluates subject, action, and context → manifest/admission limits the authority ceiling → sandbox/simulation validates it → only a host actuator may create an external effect. Emergency authority must be explicit, time-bounded, and revocable.</span></p>
+<h3>测试范围 / Test scope</h3><table><thead><tr><th>范围 / Scope</th><th>覆盖 / Coverage</th><th>不证明 / Does not prove</th></tr></thead><tbody><tr><td>单元与边界 / Unit & boundary</td><td>人格、记忆、权限、上下文与异常 / persona, memory, permission, context, errors</td><td>开放世界安全 / open-world safety</td></tr><tr><td>一致性 / Conformance</td><td>身份、不变量、记忆与权限正负路径 / positive and negative contract paths</td><td>第三方认证 / third-party certification</td></tr><tr><td>实验运行时 / Experimental runtime</td><td>ADR-0057 生命周期与稳定性 / lifecycle and stability</td><td>已接入生产入口 / production wiring</td></tr><tr><td>最终证据 / Final evidence</td><td><strong>512 passed, 4 skipped; conformance PASS</strong></td><td>真实负载、长期漂移和 SLO / real load, longitudinal drift, SLOs</td></tr></tbody></table>
+<h3>包与 manifest / Package and manifest</h3><p><code>pyproject.toml</code> 使用 setuptools 的 <code>src/</code> 布局；发布前需构建 wheel/sdist 并用 <code>tools/verify_distribution.py</code> 检查。根目录与 <code>release/</code> 的 manifest 同步记录 45 个实际 ADR 文件，范围 ADR-0001~0061 非连续且不含模板。<br><span class="en"><code>pyproject.toml</code> uses setuptools with a <code>src/</code> layout; release requires wheel/sdist construction and <code>tools/verify_distribution.py</code>. Root and release manifests synchronously inventory 45 shipped ADR files across the non-contiguous ADR-0001~0061 range, excluding the template.</span></p>
+<h3>异常目录 / Exception catalogue</h3><table><thead><tr><th>异常 / Exception</th><th>触发 / Trigger</th><th>边界 / Handling boundary</th></tr></thead><tbody><tr><td><code>ProviderUnsupportedError</code></td><td>骨架生成或不支持流式 / skeleton generation or unsupported streaming</td><td>实现具体适配器；不要把配置视为实现 / implement a concrete adapter; configuration is not implementation</td></tr><tr><td><code>ProviderConfigError</code></td><td>凭据或配置缺失 / missing credentials or configuration</td><td>修正宿主配置，不回显秘密 / fix host configuration without echoing secrets</td></tr><tr><td><code>ProviderTransportError</code></td><td>网络、超时、上游故障 / network, timeout, upstream failure</td><td>稳定错误映射；宿主管理重试 / stable mapping; host-managed retry</td></tr><tr><td><code>ProviderError</code></td><td>其他 Provider 失败 / other provider failure</td><td>不扩散供应商细节 / do not leak vendor details</td></tr><tr><td>不变量/身份门禁拒绝 / Invariant or identity rejection</td><td>输入或输出越界 / boundary-violating input or output</td><td>默认拒绝并返回结构化原因 / deny by default with structured reason</td></tr></tbody></table>
+<h3>部署变体 / Deployment variants</h3><table><thead><tr><th>变体 / Variant</th><th>适用 / Fit</th><th>要求 / Requirements</th></tr></thead><tbody><tr><td>本地确定性 / Local deterministic</td><td>只用 <code>process()</code> 的测试与嵌入 / tests and embedding with <code>process()</code></td><td>无网络；每会话实例 / no network; per-session instance</td></tr><tr><td>远程表达 / Remote expression</td><td>显式 DeepSeek <code>respond()</code> / explicit DeepSeek <code>respond()</code></td><td>秘密、出口、超时、审计 / secrets, egress, timeout, audit</td></tr><tr><td>受控宿主 / Governed host</td><td>权限、扩展或设备集成 / permission, extension, device integration</td><td>认证、隔离、人审、幂等与补偿 / auth, isolation, approval, idempotency, compensation</td></tr></tbody></table>
+<h3>源证据 / Source evidence</h3><p><code>src/tang_os/tang.py</code>（公开入口）、<code>src/runtime/persona/</code>（生产人格路径）、<code>src/runtime/memory/</code> 与 <code>src/runtime/permission/</code>（独立组件）、<code>src/providers/llm/</code>（表达边界）、<code>src/extensions/</code>、<code>src/host/</code>、<code>src/tang_os_sdk/</code>（契约与模拟）、<code>tests/</code>、<code>pyproject.toml</code>、<code>RELEASE_MANIFEST.yaml</code>。<br><span class="en">Evidence sources: public facade, wired persona runtime, standalone memory/permission components, provider boundary, extension/host/SDK contracts and simulations, tests, packaging metadata, and release manifest at the paths listed above.</span></p></section>
+
+<section id="security" class="card"><h2>9. 安全与隐私边界 / Security and privacy boundaries</h2>
+<div class="grid"><div><h3>已有控制 / Present controls</h3><ul><li>身份/不变量前置与输出验证 / identity and invariant prechecks plus output validation</li><li>记忆分类、同意与紧急态隔离 / memory categories, consent, emergency isolation</li><li>上下文类型、角色、深度、数量和大小限制 / context type, role, depth, count, and size limits</li><li>指令和记忆按不可信数据包装 / instructions and memory wrapped as untrusted data</li><li>Provider 异常映射为稳定类型 / provider failures mapped to stable types</li><li>扩展准入、沙箱和负面测试 / extension admission, sandbox, negative tests</li></ul></div><div><h3>宿主责任 / Host responsibilities</h3><ul><li>认证、租户隔离、速率限制 / authentication, tenant isolation, rate limits</li><li>秘密管理、TLS 与出口策略 / secrets, TLS, egress policy</li><li>加密、保留与删除 / encryption, retention, deletion</li><li>审计与个人数据脱敏 / audit and personal-data redaction</li><li>人审、工具幂等与补偿 / human approval, idempotency, compensation</li><li>危机/医疗升级到真实服务 / crisis and medical escalation to real services</li></ul></div></div>
+<p class="note">Provider 失败不会写入记忆、权限、工具或设备状态，但 <code>process()</code> 的人格交互状态可能已经推进。需要事务式重试时，应在独立实例/会话中由宿主协调。<br><span class="en">Provider failure does not write memory, permission, tool, or device state, but persona interaction state may already have advanced. Hosts requiring transactional retries must coordinate them in isolated sessions.</span></p></section>
+
+<section id="gaps" class="card"><h2>10. 设计—实现差异、异常与风险 / Gaps, anomalies, and risks</h2>
+<table><thead><tr><th>级别</th><th>发现 / Finding</th><th>影响 / Impact</th><th>建议 / Recommendation</th></tr></thead><tbody>
+<tr class="risk-high"><td>P0</td><td>无五层端到端事务 / no five-layer transaction</td><td>组件易被误解为闭环 / components mistaken for a complete loop</td><td>定义编排 API、原子性与审计 / define orchestration, atomicity, audit</td></tr>
+<tr class="risk-high"><td>P0</td><td>状态存储无生产治理 / state storage lacks production governance</td><td>并发、隐私、恢复风险 / concurrency, privacy, recovery risk</td><td>受控存储、事务、加密、删除与迁移 / governed storage, transactions, encryption, deletion, migration</td></tr>
+<tr class="risk-med"><td>P1</td><td><code>PersonaRuntime</code> 与 ADR-0057 双轨 / dual runtimes</td><td>schema 与行为漂移 / schema and behavior drift</td><td>ADR 决定迁移并加差分测试 / decide migration and add differential tests</td></tr>
+<tr class="risk-med"><td>P1</td><td>无统一 JSON schema / no unified JSON schema</td><td>集成方需猜转换 / integrators infer conversions</td><td>版本化 DTO 与序列化器 / versioned DTO and serializer</td></tr>
+<tr class="risk-med"><td>P1</td><td>仅 DeepSeek 远程实现 / only DeepSeek calls remotely</td><td>多 Provider 能力易高估 / provider coverage may be overstated</td><td>实现或移除骨架并测契约 / implement or remove skeletons and test contracts</td></tr>
+<tr><td>P2</td><td>知识层仅文档 / knowledge is documents only</td><td>无可追溯运行时知识 / no traceable runtime knowledge</td><td>先定义信任、引用、注入边界 / define trust, citation, injection boundaries first</td></tr>
+<tr><td>P2</td><td>历史文档有外部项目和旧数字 / historical docs cite external projects and old counts</td><td>可能被当作当前能力 / may be read as current capability</td><td>添加日期、范围与外部标签 / add dates, scope, external labels</td></tr>
+<tr><td>P2</td><td>无性能、并发、长期漂移基线 / no performance, concurrency, longitudinal baseline</td><td>容量与稳定性不可量化 / capacity and stability unquantified</td><td>建立基准、压力、恢复、长会话测试 / add benchmark, stress, recovery, long-session tests</td></tr>
+</tbody></table></section>
+
+<section id="roadmap" class="card"><h2>11. 成熟度与路线图 / Maturity and roadmap</h2>
+<table><thead><tr><th>阶段</th><th>目标 / Goal</th><th>可验收证据 / Exit evidence</th></tr></thead><tbody>
+<tr><td>现在 / Now</td><td>Alpha：稳定文档、打包、错误边界 / stabilize docs, packaging, error boundaries</td><td>CI、wheel/sdist、版本一致性 / CI, wheel/sdist, version consistency</td></tr>
+<tr><td>R1</td><td>公开 DTO/schema 与生命周期 / public DTO/schema and lifecycle</td><td>兼容测试、迁移指南、版本策略 / compatibility tests, migration guide, version policy</td></tr>
+<tr><td>R2</td><td>显式五层编排器 / explicit five-layer orchestrator</td><td>端到端失败原子性测试 / end-to-end failure atomicity tests</td></tr>
+<tr><td>R3</td><td>数据与 Provider 治理 / data and provider governance</td><td>存储、加密、删除、重试、隐私模型 / storage, encryption, deletion, retry, privacy model</td></tr>
+<tr><td>R4</td><td>统一运行时和可观测性 / unified runtime and observability</td><td>差分测试、指标、追踪、审计 / differential tests, metrics, tracing, audit</td></tr>
+<tr><td>R5</td><td>受控真实部署 / controlled live deployment</td><td>负载、安全、恢复、红队、人类升级 / load, security, recovery, red-team, human escalation</td></tr>
+</tbody></table>
+<p class="en">Maturity should advance through evidence, not feature claims: distributable builds, versioned contracts, explicit orchestration, governed persistence, provider operations, unified runtime semantics, and controlled deployment exercises.</p></section>
+
+<section class="card"><h2>12. 审查方法与结论 / Method and conclusion</h2><p>本报告按代码优先原则核对公开入口、包配置、运行时模块、Provider、示例、测试、发布清单和活跃文档。没有把规范愿景、ADR 提案或关联仓库状态升级为当前实现事实。</p><p class="en">This review used a code-first method across public entry points, packaging, runtime modules, providers, examples, tests, release manifests, and active documentation. Specification vision, ADR proposals, and related-repository status were not promoted into implementation claims.</p><p><strong>结论：</strong>Tang OS 已形成边界清晰、可测试的核心参考实现，尤其适合验证“决策与表达分离”和“能力不等于权限”的架构原则；它距离生产平台的主要差距在跨层编排、数据治理、统一 schema、运行时收敛和运营证据。</p><p class="en"><strong>Conclusion:</strong> Tang OS is a bounded, testable core reference implementation particularly useful for validating decision/expression separation and the rule that capability does not imply authority. Its remaining distance from a production platform lies in cross-layer orchestration, data governance, unified schemas, runtime convergence, and operational evidence.</p></section>
+</main>
+<footer>Tang OS bilingual repository report · Self-contained HTML · 2026-08-27</footer>
+</body></html>

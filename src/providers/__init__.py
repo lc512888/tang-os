@@ -9,11 +9,14 @@ This package follows the architecture principle:
     LLM is expression, not identity.
 """
 
-from src.providers.llm.base import LLMProvider
-from src.providers.llm.context import ExpressionContext
-from src.providers.llm.deepseek_provider import DeepSeekProvider, ProviderError, ProviderConfigError
+from providers.llm.base import LLMProvider
+from providers.llm.context import ExpressionContext
+from providers.llm.deepseek_provider import DeepSeekProvider
+from providers.llm.exceptions import (
+    ProviderError, ProviderConfigError, ProviderUnsupportedError, ProviderTransportError,
+)
 
 __all__ = [
     "LLMProvider", "ExpressionContext", "DeepSeekProvider",
-    "ProviderError", "ProviderConfigError",
+    "ProviderError", "ProviderConfigError", "ProviderUnsupportedError", "ProviderTransportError",
 ]

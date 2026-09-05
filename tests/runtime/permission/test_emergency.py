@@ -1,8 +1,8 @@
 """Tests: Emergency Override & Temporary Authority — PRM-002/003."""
 
 import pytest
-from src.runtime.permission.emergency import EmergencyAuthority
-from src.runtime.permission.models import (
+from runtime.permission.emergency import EmergencyAuthority
+from runtime.permission.models import (
     ActionScope, SAPLevel, AuthorityGrant, PermissionContext,
 )
 

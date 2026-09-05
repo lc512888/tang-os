@@ -17,15 +17,8 @@ jobs:
       run: |
         pip install build
         python -m build
-    - name: Check version binding
-      run: |
-        python -c "
-        from src.tang_os.version import MANIFEST
-        assert MANIFEST['implementation']['status'] == 'reference_only'
-        print(f\"Impl: {MANIFEST['implementation']['version']}\")
-        print(f\"Spec: {MANIFEST['specification']['version']}\")
-        print('Version binding OK')
-        "
+    - name: Verify wheel and source distribution
+      run: python tools/verify_distribution.py --artifacts dist
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:

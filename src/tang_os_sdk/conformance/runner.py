@@ -1,12 +1,12 @@
 """ConformanceRunner — Executable compatibility evidence (DIG-005)."""
 
-from src.kernel.identity import IdentityRuntime, IdentityProfile
-from src.kernel.models import IdentityLayer
-from src.kernel.invariant import InvariantEngine
-from src.runtime.memory.memory_policy import MemoryPolicy
-from src.runtime.memory.models import MemoryItem, MemoryClass
-from src.host.actuator import ActuatorGate
-from src.host.models import HostType, TAAL
+from kernel.identity import IdentityRuntime, IdentityProfile
+from kernel.models import IdentityLayer
+from kernel.invariant import InvariantEngine
+from runtime.memory.memory_policy import MemoryPolicy
+from runtime.memory.models import MemoryItem, MemoryClass
+from host.actuator import ActuatorGate
+from host.models import HostType, TAAL
 
 
 class ConformanceRunner:

@@ -1,5 +1,8 @@
 # Runtime Release Preflight Report
 
+> **Historical evidence / 历史证据：** 本文记录 2026-08-01 预检时的工作区与测试口径，
+> 包含当时尚未提交的状态，不代表当前 HEAD。当前验证结果以 CI 与 release manifest 为准。
+
 ## 运行时 Release 预检报告
 
 Version: v0.1

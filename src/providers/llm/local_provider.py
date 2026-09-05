@@ -1,27 +1,18 @@
-"""Local LLM Provider — Fully offline, no API key required.
+"""Unsupported local-model provider skeleton.
 
-Supports locally hosted models via OpenAI-compatible endpoints
-(Ollama, vLLM, llama.cpp, etc.).
-
-Usage:
-    # With Ollama (default): no API key needed
-    provider = LocalLLMProvider(base_url="http://localhost:11434/v1", model="qwen2.5")
-
-    # With vLLM or other OpenAI-compatible local server
-    provider = LocalLLMProvider(
-        base_url="http://localhost:8000/v1",
-        model="mistral-7b",
-        api_key="not-needed"
-    )
+The class preserves the provider interface and configuration shape, but
+``generate()`` does not contact a local endpoint and always raises
+``ProviderUnsupportedError``.
 """
 
 import os
-from src.providers.llm.base import LLMProvider
-from src.providers.llm.context import ExpressionContext
+from providers.llm.base import LLMProvider
+from providers.llm.context import ExpressionContext
+from providers.llm.exceptions import ProviderUnsupportedError
 
 
 class LocalLLMProvider(LLMProvider):
-    """LLM Provider for locally hosted models via OpenAI-compatible API."""
+    """Reference skeleton for a future local-model provider."""
 
     def __init__(
         self,
@@ -47,6 +38,13 @@ class LocalLLMProvider(LLMProvider):
     def requires_api_key(self) -> bool:
         return False
 
+    @property
+    def is_configured(self) -> bool:
+        return False
+
+    def health_check(self) -> dict:
+        return {"status": "unavailable", "details": ["Reference adapter skeleton; generation is unsupported."]}
+
     def validate_config(self) -> list[str]:
         issues = []
         if not self._base_url:
@@ -57,16 +55,12 @@ class LocalLLMProvider(LLMProvider):
         return issues
 
     def generate(self, context: ExpressionContext) -> str:
-        """Generate response via local model's OpenAI-compatible endpoint.
-
-        Note: This is a reference implementation stub.
-        Production use requires the 'openai' package.
-        """
+        """Raise ``ProviderUnsupportedError``; generation is not implemented."""
         _ = context  # placeholder — full implementation pending
         # TODO: Implement local model API call
-        raise NotImplementedError(
+        raise ProviderUnsupportedError(
             "LocalLLMProvider.generate() is a Reference Adapter Skeleton.\n"
             "It demonstrates the interface contract but does not include API client setup.\n"
             "To use: install 'openai' (pip install openai), configure your local model endpoint,\n"
-            "then uncomment the implementation in this method."
+            "then implement and test a concrete adapter against the local endpoint."
         )

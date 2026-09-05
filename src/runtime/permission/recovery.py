@@ -4,8 +4,9 @@ Ensures Tang OS returns to baseline after emergency/override conditions.
 Personality is preserved throughout the cycle (Core-001 integrity).
 """
 
-from datetime import datetime
-from src.runtime.permission.models import SAPLevel
+from collections import deque
+from datetime import datetime, timezone
+from runtime.permission.models import SAPLevel
 
 
 class RecoveryManager:
@@ -20,7 +21,7 @@ class RecoveryManager:
     def __init__(self):
         self._current_level = SAPLevel.L0_COMPANION
         self._emergency_count = 0
-        self._event_log: list[str] = []
+        self._event_log: deque[str] = deque(maxlen=100)
         self._in_emergency = False
 
     @property
@@ -39,13 +40,18 @@ class RecoveryManager:
     def event_log(self) -> list[str]:
         return list(self._event_log)
 
+    def _audit_event(self, event: str) -> None:
+        timestamp = datetime.now(timezone.utc).isoformat()
+        self._event_log.append(f"[{timestamp}] {event}")
+
     def enter_emergency(self, reason: str = "") -> None:
         """Elevate to Level 2 (Protective)."""
         self._current_level = SAPLevel.L2_PROTECTIVE
         self._in_emergency = True
         self._emergency_count += 1
-        self._event_log.append(
-            f"[{datetime.now().isoformat()}] EMERGENCY ENTER: {reason}"
+        # Never persist the free-form reason; it may contain sensitive context.
+        self._audit_event(
+            "EMERGENCY ENTER: reason supplied [REDACTED]" if reason else "EMERGENCY ENTER"
         )
 
     def recover(self) -> None:
@@ -55,9 +61,7 @@ class RecoveryManager:
         Personality is preserved (no modification occurred during emergency).
         """
         if self._in_emergency:
-            self._event_log.append(
-                f"[{datetime.now().isoformat()}] RECOVER: returning to L0_COMPANION"
-            )
+            self._audit_event("RECOVER: returning to L0_COMPANION")
 
         self._current_level = SAPLevel.L0_COMPANION
         self._in_emergency = False

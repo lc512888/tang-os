@@ -4,9 +4,10 @@ Checks every action/request against frozen invariants.
 Acts as a gate: any action that violates an invariant is rejected.
 """
 
+from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Callable
-from src.kernel.models import InvariantID, InvariantResult, InvariantViolation
+from kernel.models import InvariantID, InvariantResult, InvariantViolation
 
 
 @dataclass
@@ -30,21 +31,25 @@ class InvariantEngine:
 
     @property
     def invariants(self) -> list[InvariantRule]:
-        return list(self._rules)
+        """Return detached validator definitions."""
+        return deepcopy(self._rules)
 
     def check(self, action: dict) -> InvariantResult:
         """Run all invariants, stopping at first violation (fast path).
 
         Use for real-time gating where performance matters.
         """
+        if not isinstance(action, dict):
+            raise TypeError("action must be a mapping")
+        action_snapshot = deepcopy(action)
         violations: list[InvariantViolation] = []
         for rule in self._rules:
-            reason = rule.check_fn(action)
+            reason = rule.check_fn(action_snapshot)
             if reason is not None:
                 violations.append(InvariantViolation(
                     invariant_id=rule.id,
                     reason=reason,
-                    input_context=action
+                    input_context=deepcopy(action_snapshot)
                 ))
                 break  # fail-fast
         return InvariantResult(passed=len(violations) == 0, violations=violations)
@@ -54,14 +59,17 @@ class InvariantEngine:
 
         Use for audit and debugging where complete picture is needed.
         """
+        if not isinstance(action, dict):
+            raise TypeError("action must be a mapping")
+        action_snapshot = deepcopy(action)
         violations: list[InvariantViolation] = []
         for rule in self._rules:
-            reason = rule.check_fn(action)
+            reason = rule.check_fn(action_snapshot)
             if reason is not None:
                 violations.append(InvariantViolation(
                     invariant_id=rule.id,
                     reason=reason,
-                    input_context=action
+                    input_context=deepcopy(action_snapshot)
                 ))
         return InvariantResult(passed=len(violations) == 0, violations=violations)
 

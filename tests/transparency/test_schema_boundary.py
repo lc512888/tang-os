@@ -1,7 +1,7 @@
 """Schema boundary tests — capability names must not imply authority."""
 
-from src.tang_os.transparency.schema import SystemDescription
-from src.tang_os.transparency.descriptor import SystemDescriptor
+from tang_os.transparency.schema import SystemDescription
+from tang_os.transparency.descriptor import SystemDescriptor
 
 
 class TestCapabilityNaming:

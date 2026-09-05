@@ -61,22 +61,23 @@ class TestUserInstallFlow:
 
     def test_04_describe_system(self):
         """User runs: python -m tang_os describe"""
-        from src.tang_os.version import get_version_info
+        from tang_os.version import get_version_info
         info = get_version_info()
-        assert info["implementation_version"] == "0.1.0"
+        from tang_os import __version__
+        assert info["implementation_version"] == __version__
         assert "ADR-0047" in info["bound_adrs"]
         print(f"PASS: version {info['implementation_version']}, ADR-0047 bound")
 
     def test_05_import_deepseek_provider(self):
-        """User runs: from src.providers.llm import DeepSeekProvider"""
-        from src.providers.llm import DeepSeekProvider
+        """User runs: from providers.llm import DeepSeekProvider"""
+        from providers.llm import DeepSeekProvider
         provider = DeepSeekProvider()
         assert provider.provider_name == "deepseek"
         print("PASS: DeepSeekProvider imports and initializes")
 
     def test_06_import_expression_context(self):
-        """User runs: from src.providers.llm import ExpressionContext"""
-        from src.providers.llm import ExpressionContext
+        """User runs: from providers.llm import ExpressionContext"""
+        from providers.llm import ExpressionContext
         ctx = ExpressionContext(
             response_decision={
                 "detected_feeling": "sadness",
@@ -94,7 +95,7 @@ class TestUserInstallFlow:
 
     def test_07_provider_validation_error_clear(self):
         """When API key is missing, error should be clear (not a crash)."""
-        from src.providers.llm import DeepSeekProvider
+        from providers.llm import DeepSeekProvider
         provider = DeepSeekProvider(api_key="")
         issues = provider.validate_config()
         assert len(issues) > 0
@@ -108,8 +109,8 @@ class TestUserInstallFlow:
 
     def test_08_provider_error_on_missing_key(self):
         """generate() should raise ProviderConfigError, not crash."""
-        from src.providers.llm import DeepSeekProvider, ProviderConfigError
-        from src.providers.llm import ExpressionContext
+        from providers.llm import DeepSeekProvider, ProviderConfigError
+        from providers.llm import ExpressionContext
 
         provider = DeepSeekProvider(api_key="")
         ctx = ExpressionContext(
@@ -126,7 +127,7 @@ class TestUserInstallFlow:
         """The quickstart_llm.py example can be imported without errors."""
         # Simulate what the user sees in the demo
         from tang_os import Tang
-        from src.providers.llm import DeepSeekProvider, ExpressionContext
+        from providers.llm import DeepSeekProvider, ExpressionContext
         assert Tang is not None
         assert DeepSeekProvider is not None
         assert ExpressionContext is not None
