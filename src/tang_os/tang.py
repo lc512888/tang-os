@@ -10,14 +10,12 @@ Usage:
 
 import os
 from dataclasses import asdict, dataclass, fields, is_dataclass
-from pathlib import Path
 from types import MappingProxyType
-from typing import Any, Iterator, Mapping
+from typing import TYPE_CHECKING, Any, Iterator, Mapping
 
 from kernel.identity import IdentityRuntime, IdentityProfile
 from kernel.exceptions import IdentityViolationError
 from kernel.invariant import InvariantEngine
-from kernel.state import StateManager
 from runtime.persona.persona_runtime import PersonaRuntime
 from runtime.memory.memory_runtime import MemoryRuntime
 from runtime.permission.permission_runtime import PermissionRuntime
@@ -30,6 +28,9 @@ from providers.llm.context import ExpressionContext
 from providers.llm.exceptions import (
     ProviderConfigError, ProviderError, ProviderTransportError, ProviderUnsupportedError,
 )
+
+if TYPE_CHECKING:
+    from kernel.state import StateManager
 
 
 @dataclass(frozen=True)
@@ -103,12 +104,14 @@ class Tang:
 
     def __init__(
         self,
-        state_path: str | Path | None = None,
+        state_path: str | os.PathLike[str] | None = None,
         *,
         memory: MemoryRuntime | None = None,
         permission: PermissionRuntime | None = None,
         provider: LLMProvider | None = None,
     ):
+        from kernel.state import StateManager
+
         # Kernel layer
         self._identity = IdentityRuntime()
         self._invariant = InvariantEngine()
@@ -150,7 +153,7 @@ class Tang:
         return self._permission
 
     @property
-    def state(self) -> StateManager:
+    def state(self) -> "StateManager":
         return self._state
 
     @property

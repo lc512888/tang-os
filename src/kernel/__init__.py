@@ -8,7 +8,6 @@ Components:
 
 from kernel.identity import IdentityRuntime, IdentityProfile
 from kernel.invariant import InvariantEngine
-from kernel.state import StateManager
 from kernel.models import (
     IdentityLayer,
     InvariantID,
@@ -17,6 +16,17 @@ from kernel.models import (
 )
 
 from tang_os.version import __version__
+
+
+def __getattr__(name: str):
+    """Load the filesystem-backed state manager only when requested."""
+    if name == "StateManager":
+        from kernel.state import StateManager
+
+        return StateManager
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
 __all__ = [
     "IdentityRuntime",
     "IdentityProfile",

@@ -5,15 +5,19 @@ build backend. Installed distributions read that value from package metadata;
 source checkouts fall back to the root file.
 """
 
-from pathlib import Path
+import os
 
 __author__ = "上海群阅信息科技有限公司"
 __contact__ = "lc512888@gmail.com"
 
 def _implementation_version() -> str:
-    version_file = Path(__file__).resolve().parents[2] / "VERSION"
-    if version_file.is_file():
-        return version_file.read_text(encoding="utf-8").strip()
+    version_file = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "VERSION",
+    )
+    if os.path.isfile(version_file):
+        with open(version_file, encoding="utf-8") as stream:
+            return stream.read().strip()
 
     # Keep the source-checkout import path lightweight and offline. Importing
     # package metadata eagerly pulls networking-related stdlib modules into a
